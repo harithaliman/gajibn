@@ -899,65 +899,623 @@ const SubmitPage = ({ submissions, setSubmissions }) => {
 };
 
 // --- COMMUNITY DATA ---
+// ============================================================
+// ENHANCED COMMUNITY DATA PAGE for GajiBN
+// Drop-in replacement for the CommunityPage component
+// ============================================================
+// Replace the existing CommunityPage component in your main file with this.
+// All imports (useState, useMemo, recharts, COLORS, SALARY_BY_INDUSTRY) 
+// are assumed to already be available from the parent file.
+
 const CommunityPage = ({ submissions }) => {
-  const industryAgg = useMemo(() => {
-    const map = {};
+  const [filterIndustry, setFilterIndustry] = useState("All");
+  const [filterSector, setFilterSector] = useState("All");
+  const [filterExperience, setFilterExperience] = useState("All");
+  const [sortField, setSortField] = useState("salary");
+  const [sortDir, setSortDir] = useState("desc");
+  const [view, setView] = useState("overview"); // overview | table | compare
+
+  // --- Derived filter options from actual data ---
+  const filterOptions = useMemo(() => {
+    const industries = new Set();
+    const sectors = new Set();
+    const experiences = new Set();
     submissions.forEach(s => {
+      if (s.industry) industries.add(s.industry);
+      if (s.sector) sectors.add(s.sector);
+      if (s.experience) experiences.add(s.experience);
+    });
+    return {
+      industries: ["All", ...Array.from(industries).sort()],
+      sectors: ["All", ...Array.from(sectors).sort()],
+      experiences: ["All", "0-2 years", "3-5 years", "6-10 years", "10+ years"].filter(
+        e => e === "All" || experiences.has(e)
+      ),
+    };
+  }, [submissions]);
+
+  // --- Filtered data ---
+  const filtered = useMemo(() => {
+    return submissions.filter(s => {
+      if (filterIndustry !== "All" && s.industry !== filterIndustry) return false;
+      if (filterSector !== "All" && s.sector !== filterSector) return false;
+      if (filterExperience !== "All" && s.experience !== filterExperience) return false;
+      return true;
+    });
+  }, [submissions, filterIndustry, filterSector, filterExperience]);
+
+  // --- Stats ---
+  const stats = useMemo(() => {
+    if (filtered.length === 0) return null;
+    const salaries = filtered.map(s => s.salary).sort((a, b) => a - b);
+    const sum = salaries.reduce((a, b) => a + b, 0);
+    const avg = Math.round(sum / salaries.length);
+    const median = salaries.length % 2 === 0
+      ? Math.round((salaries[salaries.length / 2 - 1] + salaries[salaries.length / 2]) / 2)
+      : salaries[Math.floor(salaries.length / 2)];
+    const min = salaries[0];
+    const max = salaries[salaries.length - 1];
+    const p25 = salaries[Math.floor(salaries.length * 0.25)];
+    const p75 = salaries[Math.floor(salaries.length * 0.75)];
+    return { avg, median, min, max, p25, p75, count: salaries.length };
+  }, [filtered]);
+
+  // --- Industry breakdown ---
+  const industryBreakdown = useMemo(() => {
+    const map = {};
+    filtered.forEach(s => {
       if (!map[s.industry]) map[s.industry] = { total: 0, count: 0, salaries: [] };
       map[s.industry].total += s.salary;
       map[s.industry].count += 1;
       map[s.industry].salaries.push(s.salary);
     });
+    return Object.entries(map).map(([k, v]) => {
+      const sorted = v.salaries.sort((a, b) => a - b);
+      const median = sorted.length % 2 === 0
+        ? Math.round((sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2)
+        : sorted[Math.floor(sorted.length / 2)];
+      return {
+        industry: k,
+        avg: Math.round(v.total / v.count),
+        median,
+        count: v.count,
+        min: sorted[0],
+        max: sorted[sorted.length - 1],
+      };
+    }).sort((a, b) => b.median - a.median);
+  }, [filtered]);
+
+  // --- Experience breakdown ---
+  const experienceBreakdown = useMemo(() => {
+    const order = ["0-2 years", "3-5 years", "6-10 years", "10+ years"];
+    const map = {};
+    filtered.forEach(s => {
+      const exp = s.experience || "Unknown";
+      if (!map[exp]) map[exp] = { total: 0, count: 0, salaries: [] };
+      map[exp].total += s.salary;
+      map[exp].count += 1;
+      map[exp].salaries.push(s.salary);
+    });
+    return order.filter(k => map[k]).map(k => {
+      const v = map[k];
+      const sorted = v.salaries.sort((a, b) => a - b);
+      const median = sorted.length % 2 === 0
+        ? Math.round((sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2)
+        : sorted[Math.floor(sorted.length / 2)];
+      return {
+        experience: k,
+        avg: Math.round(v.total / v.count),
+        median,
+        count: v.count,
+        min: sorted[0],
+        max: sorted[sorted.length - 1],
+      };
+    });
+  }, [filtered]);
+
+  // --- Sector breakdown ---
+  const sectorBreakdown = useMemo(() => {
+    const map = {};
+    filtered.forEach(s => {
+      const sec = s.sector || "Unknown";
+      if (!map[sec]) map[sec] = { total: 0, count: 0 };
+      map[sec].total += s.salary;
+      map[sec].count += 1;
+    });
     return Object.entries(map).map(([k, v]) => ({
-      industry: k, avg: Math.round(v.total / v.count), count: v.count,
-      min: Math.min(...v.salaries), max: Math.max(...v.salaries),
-    })).sort((a, b) => b.avg - a.avg);
-  }, [submissions]);
+      sector: k, avg: Math.round(v.total / v.count), count: v.count,
+    })).sort((a, b) => b.count - a.count);
+  }, [filtered]);
 
-  return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px" }}>
-      <h2 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 28, color: COLORS.text, marginBottom: 4 }}>Community Salary Data</h2>
-      <p style={{ color: COLORS.textLight, marginBottom: 28, fontSize: 15 }}>Real salaries shared anonymously by Bruneians. {submissions.length} contribution{submissions.length !== 1 ? "s" : ""} so far.</p>
+  // --- Salary distribution (histogram) ---
+  const salaryDistribution = useMemo(() => {
+    const buckets = [
+      { label: "< 500", min: 0, max: 499 },
+      { label: "500-999", min: 500, max: 999 },
+      { label: "1,000-1,499", min: 1000, max: 1499 },
+      { label: "1,500-1,999", min: 1500, max: 1999 },
+      { label: "2,000-2,999", min: 2000, max: 2999 },
+      { label: "3,000-4,999", min: 3000, max: 4999 },
+      { label: "5,000+", min: 5000, max: Infinity },
+    ];
+    return buckets.map(b => ({
+      range: b.label,
+      count: filtered.filter(s => s.salary >= b.min && s.salary <= b.max).length,
+    }));
+  }, [filtered]);
 
-      {submissions.length === 0 ? (
-        <div style={{ textAlign: "center", padding: 60, background: COLORS.bgCard, borderRadius: 16, border: `1px solid ${COLORS.border}` }}>
+  // --- Compare: community vs DEPS official ---
+  const compareData = useMemo(() => {
+    return industryBreakdown
+      .filter(c => {
+        // Match community industry names to DEPS data
+        return SALARY_BY_INDUSTRY.some(d =>
+          d.industry.toLowerCase().includes(c.industry.toLowerCase().split(" ")[0]) ||
+          c.industry.toLowerCase().includes(d.industry.toLowerCase().split(" ")[0])
+        );
+      })
+      .map(c => {
+        const match = SALARY_BY_INDUSTRY.find(d =>
+          d.industry.toLowerCase().includes(c.industry.toLowerCase().split(" ")[0]) ||
+          c.industry.toLowerCase().includes(d.industry.toLowerCase().split(" ")[0])
+        );
+        return match ? {
+          industry: c.industry,
+          community: c.avg,
+          official: match.local,
+          diff: c.avg - match.local,
+          diffPct: Math.round(((c.avg - match.local) / match.local) * 100),
+          communityCount: c.count,
+        } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.diff - a.diff);
+  }, [industryBreakdown]);
+
+  // --- Sorted table data ---
+  const sortedFiltered = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      let av = a[sortField], bv = b[sortField];
+      if (typeof av === "string") av = av.toLowerCase();
+      if (typeof bv === "string") bv = bv.toLowerCase();
+      if (av < bv) return sortDir === "asc" ? -1 : 1;
+      if (av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filtered, sortField, sortDir]);
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDir(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDir(field === "salary" ? "desc" : "asc");
+    }
+  };
+
+  const isFiltered = filterIndustry !== "All" || filterSector !== "All" || filterExperience !== "All";
+
+  // --- Styles ---
+  const selectStyle = {
+    padding: "8px 12px", borderRadius: 8, border: `1.5px solid ${COLORS.border}`,
+    fontSize: 13, fontFamily: "'DM Sans', sans-serif", background: "#fff",
+    outline: "none", boxSizing: "border-box", cursor: "pointer", minWidth: 140,
+  };
+  const labelStyle = {
+    fontSize: 10, fontWeight: 600, color: COLORS.textMuted,
+    textTransform: "uppercase", letterSpacing: 1, marginBottom: 4, display: "block",
+  };
+  const pillStyle = (active) => ({
+    padding: "7px 16px", borderRadius: 8, border: `1.5px solid ${active ? COLORS.primary : COLORS.border}`,
+    background: active ? `${COLORS.primary}12` : "#fff", color: active ? COLORS.primary : COLORS.textLight,
+    fontWeight: 600, fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+    transition: "all 0.15s",
+  });
+  const cardStyle = {
+    background: COLORS.bgCard, borderRadius: 14, padding: 20,
+    border: `1px solid ${COLORS.border}`, boxShadow: "0 1px 6px rgba(60,30,10,0.03)",
+  };
+
+  if (submissions.length === 0) {
+    return (
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px" }}>
+        <h2 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 28, color: COLORS.text, marginBottom: 4 }}>Community Salary Data</h2>
+        <div style={{ textAlign: "center", padding: 60, ...cardStyle, marginTop: 24 }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
           <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 20, color: COLORS.text, marginBottom: 8 }}>No submissions yet</div>
           <div style={{ fontSize: 14, color: COLORS.textLight }}>Be the first to share your salary and help build Brunei's salary database!</div>
         </div>
-      ) : (
-        <>
-          {industryAgg.length > 0 && (
-            <div style={{ background: COLORS.bgCard, borderRadius: 16, padding: 24, border: `1px solid ${COLORS.border}`, marginBottom: 24 }}>
-              <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 16 }}>Community Averages by Industry</h3>
-              <ResponsiveContainer width="100%" height={Math.max(200, industryAgg.length * 48)}>
-                <BarChart data={industryAgg} layout="vertical" margin={{ left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#EDE5DB" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: COLORS.textLight }} />
-                  <YAxis type="category" dataKey="industry" tick={{ fontSize: 12, fill: COLORS.text }} width={130} />
-                  <Tooltip formatter={(v) => `BND ${v.toLocaleString()}`} contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", fontSize: 13 }} />
-                  <Bar dataKey="avg" radius={[0, 8, 8, 0]} fill={COLORS.accent2} barSize={22} name="Community Avg" />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 28, color: COLORS.text, marginBottom: 4 }}>
+          Community Salary Data
+        </h2>
+        <p style={{ color: COLORS.textLight, fontSize: 15, marginBottom: 0 }}>
+          Real salaries shared anonymously by Bruneians. <strong style={{ color: COLORS.primary }}>{submissions.length}</strong> contributions and counting.
+        </p>
+      </div>
+
+      {/* Filters Bar */}
+      <div style={{
+        ...cardStyle, padding: "16px 20px", marginBottom: 20,
+        display: "flex", alignItems: "flex-end", gap: 16, flexWrap: "wrap",
+      }}>
+        <div style={{ flex: "1 1 160px" }}>
+          <label style={labelStyle}>Industry</label>
+          <select value={filterIndustry} onChange={e => setFilterIndustry(e.target.value)} style={selectStyle}>
+            {filterOptions.industries.map(i => <option key={i} value={i}>{i === "All" ? "All Industries" : i}</option>)}
+          </select>
+        </div>
+        <div style={{ flex: "1 1 140px" }}>
+          <label style={labelStyle}>Sector</label>
+          <select value={filterSector} onChange={e => setFilterSector(e.target.value)} style={selectStyle}>
+            {filterOptions.sectors.map(s => <option key={s} value={s}>{s === "All" ? "All Sectors" : s}</option>)}
+          </select>
+        </div>
+        <div style={{ flex: "1 1 130px" }}>
+          <label style={labelStyle}>Experience</label>
+          <select value={filterExperience} onChange={e => setFilterExperience(e.target.value)} style={selectStyle}>
+            {filterOptions.experiences.map(e => <option key={e} value={e}>{e === "All" ? "All Levels" : e}</option>)}
+          </select>
+        </div>
+        {isFiltered && (
+          <button onClick={() => { setFilterIndustry("All"); setFilterSector("All"); setFilterExperience("All"); }}
+            style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${COLORS.red}30`, background: `${COLORS.red}08`, color: COLORS.red, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", whiteSpace: "nowrap" }}>
+            ✕ Clear Filters
+          </button>
+        )}
+        <div style={{ fontSize: 12, color: COLORS.textMuted, whiteSpace: "nowrap", paddingBottom: 2 }}>
+          Showing <strong style={{ color: COLORS.text }}>{filtered.length}</strong> of {submissions.length}
+        </div>
+      </div>
+
+      {/* View Toggle */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
+        {[
+          { id: "overview", label: "📊 Overview" },
+          { id: "table", label: "📋 All Data" },
+          { id: "compare", label: "⚖️ Community vs Official" },
+        ].map(v => (
+          <button key={v.id} onClick={() => setView(v.id)} style={pillStyle(view === v.id)}>{v.label}</button>
+        ))}
+      </div>
+
+      {/* ============ OVERVIEW VIEW ============ */}
+      {view === "overview" && stats && (
+        <div style={{ animation: "fadeUp 0.35s ease-out" }}>
+          {/* Key Stats Row */}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+            {[
+              { label: "Median Salary", value: `BND ${stats.median.toLocaleString()}`, sub: "50th percentile", color: COLORS.primary, icon: "📍" },
+              { label: "Average Salary", value: `BND ${stats.avg.toLocaleString()}`, sub: `${stats.count} responses`, color: COLORS.accent1, icon: "📊" },
+              { label: "Salary Range", value: `${stats.min.toLocaleString()} – ${stats.max.toLocaleString()}`, sub: "BND min – max", color: COLORS.accent2, icon: "↕️" },
+              { label: "Middle 50%", value: `${stats.p25.toLocaleString()} – ${stats.p75.toLocaleString()}`, sub: "25th – 75th percentile", color: COLORS.greenDark, icon: "🎯" },
+            ].map((s, i) => (
+              <div key={i} style={{
+                ...cardStyle, flex: "1 1 200px", padding: "18px 16px",
+                borderLeft: `4px solid ${s.color}`,
+              }}>
+                <div style={{ fontSize: 10, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+                  {s.icon} {s.label}
+                </div>
+                <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 22, color: COLORS.text, marginBottom: 2 }}>
+                  {s.value}
+                </div>
+                <div style={{ fontSize: 11, color: COLORS.textMuted }}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Two-column: Distribution + Experience */}
+          <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 20 }}>
+            {/* Salary Distribution Histogram */}
+            <div style={{ ...cardStyle, flex: "1 1 480px" }}>
+              <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 17, color: COLORS.text, marginBottom: 4 }}>
+                Salary Distribution
+              </h3>
+              <p style={{ fontSize: 12, color: COLORS.textMuted, marginBottom: 14 }}>
+                How community salaries are distributed across ranges
+              </p>
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={salaryDistribution} margin={{ left: -10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EDE5DB" vertical={false} />
+                  <XAxis dataKey="range" tick={{ fontSize: 11, fill: COLORS.textLight }} />
+                  <YAxis tick={{ fontSize: 11, fill: COLORS.textLight }} allowDecimals={false} />
+                  <Tooltip
+                    formatter={(v) => [`${v} people`, "Count"]}
+                    contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", fontSize: 13 }}
+                  />
+                  <Bar dataKey="count" radius={[6, 6, 0, 0]} fill={COLORS.primary} barSize={36}>
+                    {salaryDistribution.map((entry, i) => (
+                      <Cell key={i} fill={entry.count > 0 ? COLORS.primary : `${COLORS.primary}30`} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          )}
 
-          <div style={{ background: COLORS.bgCard, borderRadius: 16, padding: 24, border: `1px solid ${COLORS.border}` }}>
-            <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 16 }}>Recent Submissions</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {submissions.slice(0, 20).map((s, i) => (
-                <div key={s.id || i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: i % 2 === 0 ? "#FDFAF7" : "#fff", borderRadius: 10, flexWrap: "wrap", gap: 8 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.text }}>{s.title}</div>
-                    <div style={{ fontSize: 12, color: COLORS.textMuted }}>{s.industry} • {s.sector}{s.experience ? ` • ${s.experience}` : ""}{s.company ? ` • ${s.company}` : ""}</div>
+            {/* Experience vs Salary */}
+            <div style={{ ...cardStyle, flex: "1 1 320px" }}>
+              <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 17, color: COLORS.text, marginBottom: 4 }}>
+                Experience vs Salary
+              </h3>
+              <p style={{ fontSize: 12, color: COLORS.textMuted, marginBottom: 14 }}>
+                Median salary by years of experience
+              </p>
+              {experienceBreakdown.length > 0 ? (
+                <>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <BarChart data={experienceBreakdown} margin={{ left: -10 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#EDE5DB" vertical={false} />
+                      <XAxis dataKey="experience" tick={{ fontSize: 10, fill: COLORS.textLight }} />
+                      <YAxis tick={{ fontSize: 11, fill: COLORS.textLight }} />
+                      <Tooltip
+                        formatter={(v) => [`BND ${v.toLocaleString()}`, "Median"]}
+                        contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", fontSize: 13 }}
+                      />
+                      <Bar dataKey="median" radius={[6, 6, 0, 0]} fill={COLORS.accent1} barSize={32} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+                    {experienceBreakdown.map((e, i) => (
+                      <div key={i} style={{ fontSize: 11, color: COLORS.textMuted, padding: "3px 8px", background: "#F5F0EB", borderRadius: 6 }}>
+                        {e.experience}: <strong style={{ color: COLORS.text }}>{e.count}</strong> people
+                      </div>
+                    ))}
                   </div>
-                  <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.primary }}>BND {s.salary.toLocaleString()}</div>
-                </div>
-              ))}
+                </>
+              ) : (
+                <div style={{ fontSize: 13, color: COLORS.textMuted, padding: 20, textAlign: "center" }}>No experience data for current filters</div>
+              )}
             </div>
           </div>
-        </>
+
+          {/* Industry Breakdown - Enhanced */}
+          <div style={{ ...cardStyle, marginBottom: 20 }}>
+            <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 17, color: COLORS.text, marginBottom: 4 }}>
+              By Industry
+            </h3>
+            <p style={{ fontSize: 12, color: COLORS.textMuted, marginBottom: 16 }}>
+              Median salary and range reported by the community
+            </p>
+            {industryBreakdown.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {industryBreakdown.map((ind, i) => {
+                  const barMax = Math.max(...industryBreakdown.map(d => d.max), 1);
+                  const leftPct = (ind.min / barMax) * 100;
+                  const widthPct = ((ind.max - ind.min) / barMax) * 100;
+                  const medianPct = (ind.median / barMax) * 100;
+                  return (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < industryBreakdown.length - 1 ? `1px solid ${COLORS.border}40` : "none" }}>
+                      <div style={{ width: 140, flexShrink: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text }}>{ind.industry}</div>
+                        <div style={{ fontSize: 11, color: COLORS.textMuted }}>{ind.count} {ind.count === 1 ? "person" : "people"}</div>
+                      </div>
+                      <div style={{ flex: 1, position: "relative", height: 28 }}>
+                        {/* Range bar */}
+                        <div style={{
+                          position: "absolute", top: 8, height: 12, borderRadius: 6,
+                          left: `${leftPct}%`, width: `${Math.max(widthPct, 1)}%`,
+                          background: `${COLORS.chartColors[i % COLORS.chartColors.length]}25`,
+                          border: `1px solid ${COLORS.chartColors[i % COLORS.chartColors.length]}40`,
+                        }} />
+                        {/* Median dot */}
+                        <div style={{
+                          position: "absolute", top: 6, left: `${medianPct}%`, transform: "translateX(-50%)",
+                          width: 16, height: 16, borderRadius: "50%",
+                          background: COLORS.chartColors[i % COLORS.chartColors.length],
+                          border: "2px solid #fff", boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+                        }} />
+                      </div>
+                      <div style={{ width: 100, textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 16, color: COLORS.text }}>
+                          BND {ind.median.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: 10, color: COLORS.textMuted }}>
+                          {ind.min.toLocaleString()} – {ind.max.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ fontSize: 13, color: COLORS.textMuted, padding: 20, textAlign: "center" }}>No industry data for current filters</div>
+            )}
+          </div>
+
+          {/* Sector Breakdown - Pie */}
+          {sectorBreakdown.length > 1 && (
+            <div style={{ ...cardStyle }}>
+              <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 17, color: COLORS.text, marginBottom: 4 }}>
+                By Sector
+              </h3>
+              <p style={{ fontSize: 12, color: COLORS.textMuted, marginBottom: 14 }}>
+                Breakdown of contributions by sector type
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+                <ResponsiveContainer width={200} height={200}>
+                  <PieChart>
+                    <Pie data={sectorBreakdown} dataKey="count" nameKey="sector" cx="50%" cy="50%" innerRadius={45} outerRadius={80} paddingAngle={3} strokeWidth={0}>
+                      {sectorBreakdown.map((_, i) => (
+                        <Cell key={i} fill={COLORS.chartColors[i % COLORS.chartColors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v) => [`${v} people`, "Count"]} contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", fontSize: 13 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                  {sectorBreakdown.map((s, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ width: 12, height: 12, borderRadius: 3, background: COLORS.chartColors[i % COLORS.chartColors.length], flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <span style={{ fontSize: 13, color: COLORS.text, fontWeight: 500 }}>{s.sector}</span>
+                        <span style={{ fontSize: 12, color: COLORS.textMuted, marginLeft: 8 }}>{s.count} ({Math.round((s.count / filtered.length) * 100)}%)</span>
+                      </div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text }}>BND {s.avg.toLocaleString()} avg</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       )}
+
+      {/* ============ TABLE VIEW ============ */}
+      {view === "table" && (
+        <div style={{ ...cardStyle, animation: "fadeUp 0.35s ease-out", padding: 0, overflow: "hidden" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "'DM Sans', sans-serif", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "#FAF6F1", borderBottom: `2px solid ${COLORS.border}` }}>
+                  {[
+                    { key: "title", label: "Job Title", width: "28%" },
+                    { key: "industry", label: "Industry", width: "18%" },
+                    { key: "sector", label: "Sector", width: "14%" },
+                    { key: "experience", label: "Experience", width: "12%" },
+                    { key: "company", label: "Company", width: "12%" },
+                    { key: "salary", label: "Salary (BND)", width: "16%" },
+                  ].map(col => (
+                    <th key={col.key} onClick={() => handleSort(col.key)} style={{
+                      padding: "12px 14px", textAlign: col.key === "salary" ? "right" : "left",
+                      cursor: "pointer", userSelect: "none", width: col.width,
+                      fontSize: 11, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.8,
+                      position: "relative",
+                    }}>
+                      {col.label}
+                      {sortField === col.key && (
+                        <span style={{ marginLeft: 4, fontSize: 10 }}>{sortDir === "asc" ? "↑" : "↓"}</span>
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sortedFiltered.map((s, i) => (
+                  <tr key={s.id || i} style={{
+                    borderBottom: `1px solid ${COLORS.border}40`,
+                    background: i % 2 === 0 ? "#fff" : "#FDFAF7",
+                    transition: "background 0.15s",
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.background = `${COLORS.primary}06`}
+                    onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? "#fff" : "#FDFAF7"}
+                  >
+                    <td style={{ padding: "11px 14px", fontWeight: 600, color: COLORS.text }}>{s.title}</td>
+                    <td style={{ padding: "11px 14px", color: COLORS.textLight }}>{s.industry}</td>
+                    <td style={{ padding: "11px 14px" }}>
+                      <span style={{
+                        padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 500,
+                        background: s.sector === "Government" ? "#EBF2F8" : s.sector === "Private" ? "#FEF3E9" : "#F0E8DF",
+                        color: s.sector === "Government" ? COLORS.accent1 : s.sector === "Private" ? COLORS.primaryDark : COLORS.textLight,
+                      }}>{s.sector}</span>
+                    </td>
+                    <td style={{ padding: "11px 14px", color: COLORS.textMuted, fontSize: 12 }}>{s.experience || "—"}</td>
+                    <td style={{ padding: "11px 14px", color: COLORS.textMuted, fontSize: 12, fontStyle: s.company ? "normal" : "italic" }}>{s.company || "—"}</td>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 16, color: COLORS.primary, fontWeight: 600 }}>
+                      {s.salary.toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {filtered.length === 0 && (
+            <div style={{ padding: 40, textAlign: "center", color: COLORS.textMuted, fontSize: 14 }}>
+              No submissions match your filters. Try broadening your selection.
+            </div>
+          )}
+          {stats && (
+            <div style={{
+              padding: "12px 14px", background: "#FAF6F1", borderTop: `2px solid ${COLORS.border}`,
+              display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8,
+            }}>
+              <span style={{ fontSize: 12, color: COLORS.textMuted }}>
+                {filtered.length} entries shown
+              </span>
+              <div style={{ display: "flex", gap: 16, fontSize: 12 }}>
+                <span style={{ color: COLORS.textMuted }}>Median: <strong style={{ color: COLORS.text }}>BND {stats.median.toLocaleString()}</strong></span>
+                <span style={{ color: COLORS.textMuted }}>Average: <strong style={{ color: COLORS.text }}>BND {stats.avg.toLocaleString()}</strong></span>
+                <span style={{ color: COLORS.textMuted }}>Range: <strong style={{ color: COLORS.text }}>{stats.min.toLocaleString()} – {stats.max.toLocaleString()}</strong></span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ============ COMPARE VIEW ============ */}
+      {view === "compare" && (
+        <div style={{ animation: "fadeUp 0.35s ease-out" }}>
+          <div style={{ ...cardStyle, marginBottom: 20 }}>
+            <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 17, color: COLORS.text, marginBottom: 4 }}>
+              Community Data vs Official DEPS Statistics
+            </h3>
+            <p style={{ fontSize: 12, color: COLORS.textMuted, marginBottom: 20 }}>
+              How do anonymously reported salaries compare to the government's Labour Force Survey data for local workers?
+            </p>
+
+            {compareData.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={Math.max(240, compareData.length * 50)}>
+                  <BarChart data={compareData} layout="vertical" margin={{ left: 10, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#EDE5DB" horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 11, fill: COLORS.textLight }} />
+                    <YAxis type="category" dataKey="industry" tick={{ fontSize: 12, fill: COLORS.text }} width={130} />
+                    <Tooltip
+                      formatter={(v, name) => [`BND ${v.toLocaleString()}`, name === "community" ? "Community Avg" : "DEPS Official"]}
+                      contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", fontSize: 13 }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Bar dataKey="community" name="Community Avg" radius={[0, 6, 6, 0]} fill={COLORS.primary} barSize={14} />
+                    <Bar dataKey="official" name="DEPS Official (Locals)" radius={[0, 6, 6, 0]} fill={COLORS.accent1} barSize={14} />
+                  </BarChart>
+                </ResponsiveContainer>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 20 }}>
+                  {compareData.map((c, i) => (
+                    <div key={i} style={{
+                      display: "flex", alignItems: "center", gap: 12, padding: "8px 12px",
+                      background: i % 2 === 0 ? "#FDFAF7" : "#fff", borderRadius: 8,
+                    }}>
+                      <div style={{ flex: 1, fontSize: 13, fontWeight: 500, color: COLORS.text }}>{c.industry}</div>
+                      <div style={{ fontSize: 12, color: COLORS.textMuted }}>{c.communityCount} responses</div>
+                      <div style={{
+                        padding: "3px 10px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                        background: c.diff >= 0 ? "#E6F6E9" : "#FEE9E9",
+                        color: c.diff >= 0 ? COLORS.greenDark : COLORS.red,
+                      }}>
+                        {c.diff >= 0 ? "+" : ""}{c.diffPct}% vs official
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div style={{ fontSize: 13, color: COLORS.textMuted, padding: 20, textAlign: "center" }}>
+                Not enough matching data to compare. Try clearing filters.
+              </div>
+            )}
+          </div>
+
+          <div style={{ background: `${COLORS.accent1}08`, borderRadius: 12, padding: 16, border: `1px dashed ${COLORS.accent1}40` }}>
+            <p style={{ fontSize: 12, color: COLORS.accent1, margin: 0, lineHeight: 1.6 }}>
+              <strong>How to read this:</strong> Community data comes from anonymous self-reported salaries, while DEPS figures are from the official Labour Force Survey 2024 (local worker averages). Differences may reflect sample composition, as community contributors may skew toward certain roles, experience levels, or qualifications. Larger sample sizes give more reliable comparisons.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Footer note */}
+      <div style={{ marginTop: 24, fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 }}>
+        Community data is self-reported and anonymous. Salary figures may not be representative of the broader population. For official statistics, refer to the{" "}
+        <a href="https://deps.mofe.gov.bn/labour-force/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>DEPS Labour Force Survey 2024</a>.
+      </div>
     </div>
   );
 };
