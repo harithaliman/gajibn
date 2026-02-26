@@ -59,153 +59,153 @@ const GOV_VS_PRIVATE = {
 };
 
 // Source: MPEC Salary Guideline 2023 Edition - 22 Job Families, 100 Positions
-// Each level array: { title, salary } representing the full career ladder
+// Each level: { title, salary, exp (years experience), desc (key requirements) }
 const MPEC_GUIDELINES = [
   // === GENERAL SECTOR ===
   { family: "Logistics", sector: "General", levels: [
-    { title: "Packer / Courier", salary: 492 },
-    { title: "Warehouse Assistant", salary: 977 },
-    { title: "Warehouse Supervisor", salary: 1736 },
-    { title: "Warehouse Manager", salary: 2170 },
-    { title: "Supply Chain Manager", salary: 3580 },
+    { title: "Packer / Courier", salary: 492, exp: "Entry", desc: "Physically fit, inventory management, warehouse maintenance, quality checker, basic heavy vehicle certification" },
+    { title: "Warehouse Assistant", salary: 977, exp: "2 yrs", desc: "2 yrs as warehouse labourer, inventory management, planning coordinator, sales records, intermediate heavy vehicle cert" },
+    { title: "Warehouse Supervisor", salary: 1736, exp: "3 yrs", desc: "3 yrs as warehouse assistant, business related courses, leadership skills, warehouse maintenance, analytical skills" },
+    { title: "Warehouse Manager", salary: 2170, exp: "2-5 yrs", desc: "2-5 yrs as warehouse supervisor, inventory management, leadership skills, quality assurance, advanced heavy vehicle cert" },
+    { title: "Supply Chain Manager", salary: 3580, exp: "3-5 yrs", desc: "3-5 yrs as warehouse manager, business/logistics courses, multi-warehouse inventory, financial performance, fleet management" },
   ]},
   { family: "Customer Care", sector: "General", levels: [
-    { title: "Telephone Operator / Receptionist", salary: 492 },
-    { title: "Customer Care Trainee", salary: 868 },
-    { title: "Customer Care Executive", salary: 1085 },
-    { title: "Senior CC & Retention Executive", salary: 1627 },
-    { title: "CC & Retention Manager", salary: 3255 },
+    { title: "Telephone Operator / Receptionist", salary: 492, exp: "Entry", desc: "Planning coordinator, answering/forwarding calls, pleasant personality, product knowledge, inventory management" },
+    { title: "Customer Care Trainee", salary: 868, exp: "2 yrs", desc: "2 yrs as receptionist/telephone operator, product knowledge, showroom security measures, sales documentation" },
+    { title: "Customer Care Executive", salary: 1085, exp: "3 yrs", desc: "3 yrs as assistant CC executive, product knowledge, marketing, updating promotions, resolve client problems" },
+    { title: "Senior CC & Retention Executive", salary: 1627, exp: "1 yr", desc: "1 yr as CC executive, marketing of products, retail sales, sales documentation, adaptive market strategy" },
+    { title: "CC & Retention Manager", salary: 3255, exp: "3 yrs", desc: "3 yrs as senior CC executive, creating promotion strategies, optimization of business potential, reporting of market trends" },
   ]},
   { family: "Administration", sector: "General", levels: [
-    { title: "Office Assistant / Receptionist", salary: 492 },
-    { title: "Clerk", salary: 868 },
-    { title: "Office Manager", salary: 1410 },
-    { title: "Executive Assistant", salary: 1736 },
-    { title: "Admin Manager", salary: 2712 },
+    { title: "Office Assistant / Receptionist", salary: 492, exp: "Entry", desc: "Planning coordinator, answering/forwarding calls, pleasant personality, basic payment processing, delivery of documents" },
+    { title: "Clerk", salary: 868, exp: "1 yr", desc: "1 yr experience, managing/drafting company paperwork, data entry, office inventory management, basic bookkeeping" },
+    { title: "Office Manager", salary: 1410, exp: "2-3 yrs", desc: "2-3 yrs experience, report writing, data entry & storage, basic bookkeeping, disseminating internal memos" },
+    { title: "Executive Assistant", salary: 1736, exp: "2-3 yrs", desc: "2-3 yrs experience, consolidating reports, strong logical/critical thinking, preparing paperwork for review/approval" },
+    { title: "Admin Manager", salary: 2712, exp: "4 yrs", desc: "4 yrs experience, efficient office strategies, proper organization of documents, report company performance, budget preparation" },
   ]},
   { family: "Finance & Accounting", sector: "General", levels: [
-    { title: "Accounting Trainee", salary: 492 },
-    { title: "Accounting Clerk / Assistant", salary: 1085 },
-    { title: "Assistant Accountant", salary: 2170 },
-    { title: "Accountant", salary: 4340 },
-    { title: "Finance Manager", salary: 9765 },
+    { title: "Accounting Trainee", salary: 492, exp: "Entry", desc: "Basic accounting, foundation in accounting, transaction documentation, organization of financial records, handling petty cash" },
+    { title: "Accounting Clerk / Assistant", salary: 1085, exp: "CAT cert", desc: "Certified Accounting Technician (CAT), administrative support, preparing & verifying financial documents, compliance to ethical standards" },
+    { title: "Assistant Accountant", salary: 2170, exp: "1-2 yrs", desc: "1-2 yrs as accounting clerk, CAT qualified, financial reports, accounts reconciliation, accounting software, assist in auditing" },
+    { title: "Accountant", salary: 4340, exp: "2-3 yrs", desc: "2-3 yrs as assistant accountant, ACCA/CFA/CPA qualified, financial reporting, procurement documentation, auditing" },
+    { title: "Finance Manager", salary: 9765, exp: "3-5 yrs", desc: "3-5 yrs as accountant, CFA/CPA/CMA/ACCA/CIMA certified, financial performance reporting, approval of procurement, compliance" },
   ]},
   { family: "Tourism", sector: "General", levels: [
-    { title: "Junior Tour Guide", salary: 543 },
-    { title: "Senior Tour Guide", salary: 868 },
-    { title: "Assistant Travel Consultant", salary: 1085 },
-    { title: "Travel Consultant", salary: 1736 },
-    { title: "Travel Agency Manager", salary: 3255 },
+    { title: "Junior Tour Guide", salary: 543, exp: "Licensed", desc: "Licensed tour guide (MPRT), certified first aid, comprehensive knowledge on laws/culture/arts/history, multi-lingual" },
+    { title: "Senior Tour Guide", salary: 868, exp: "Licensed", desc: "Licensed tour guide (MPRT), certified first aid, multi-lingual, good time management, develop tour schedule" },
+    { title: "Assistant Travel Consultant", salary: 1085, exp: "Exp'd", desc: "Comprehensive general knowledge, multi-lingual, develop tour schedule, coordinating tour visits, managing travel documents" },
+    { title: "Travel Consultant", salary: 1736, exp: "Exp'd", desc: "Coordinate tour guides and groups, preparing travel brochures & promotional materials, maintain statistical & financial records" },
+    { title: "Travel Agency Manager", salary: 3255, exp: "Exp'd", desc: "Comprehensive general knowledge, multi-lingual, maintain financial records, preparing sales reports, approving proposals" },
   ]},
   { family: "Cleaning Services", sector: "General", levels: [
-    { title: "Cleaner", salary: 492 },
-    { title: "Multi-Skilled Cleaner", salary: 543 },
-    { title: "Head Cleaner", salary: 673 },
-    { title: "Cleaning Supervisor", salary: 1085 },
-    { title: "Cleaning Services Manager", salary: 1410 },
+    { title: "Cleaner", salary: 492, exp: "Entry", desc: "Attention to detail, handle heavy equipment/machinery, knowledge of cleaning chemicals & supplies, stock & maintain supply rooms" },
+    { title: "Multi-Skilled Cleaner", salary: 543, exp: "1 yr", desc: "1 yr as cleaner, attention to detail, handle heavy equipment, knowledge of cleaning chemicals, health & safety compliance" },
+    { title: "Head Cleaner", salary: 673, exp: "2 yrs", desc: "2 yrs as multi-skilled cleaner, familiar with MSDS, health & safety compliance, plan monthly stock usage, reporting of issues" },
+    { title: "Cleaning Supervisor", salary: 1085, exp: "3-5 yrs", desc: "3-5 yrs as head cleaner, familiar with MSDS, conduct quality inspections, propose process improvements, handle cleaners' welfare" },
+    { title: "Cleaning Services Manager", salary: 1410, exp: "5-7 yrs", desc: "5-7 yrs as cleaning supervisor, propose/mitigate current processes, research new cleaning products, coordinate cleaning projects" },
   ]},
   { family: "Information Technology", sector: "General", levels: [
-    { title: "IT Clerk", salary: 492 },
-    { title: "IT Assistant", salary: 868 },
-    { title: "IT System Technician", salary: 977 },
-    { title: "IT System Executive", salary: 1628 },
-    { title: "IT System Manager", salary: 2170 },
+    { title: "IT Clerk", salary: 492, exp: "Entry", desc: "Basic knowledge on common IT issues, manage IT inventory, setting up workstations, ensure safety usage of IT materials" },
+    { title: "IT Assistant", salary: 868, exp: "Basic", desc: "Basic knowledge on IT issues, provide user guidance, conduct authorized software upgrades, performing back-ups, diagnose basic issues" },
+    { title: "IT System Technician", salary: 977, exp: "1-2 yrs", desc: "1-2 yrs experience, Diploma in IT, Linux+/Cisco certified, diagnose & resolve IT issues, install & configure hardware/software" },
+    { title: "IT System Executive", salary: 1628, exp: "3-5 yrs", desc: "3-5 yrs experience, HND in IT, Linux+/Cisco CCNA, procure IT hardware & software, conduct disaster recovery exercise" },
+    { title: "IT System Manager", salary: 2170, exp: "2-5 yrs", desc: "2-5 yrs experience, Bachelor's in IT/Computer Science, prepare disaster recovery, administer websites, VBA programming, IT budgets" },
   ]},
   { family: "Culinary", sector: "General", levels: [
-    { title: "Kitchen Assistant", salary: 521 },
-    { title: "Commis Chef", salary: 706 },
-    { title: "Chef De Partie", salary: 1085 },
-    { title: "Sous Chef", salary: 1628 },
-    { title: "Chef De Cuisine", salary: 3038 },
+    { title: "Kitchen Assistant", salary: 521, exp: "Entry", desc: "Compliance with Brunei Halal regulations, cleaning & organizing kitchen, preparing ingredients, monitoring stock, quality checking" },
+    { title: "Commis Chef", salary: 706, exp: "1 yr", desc: "1 yr as kitchen assistant, Halal compliance, identify ingredient shortages, inspection of food & serving areas, prepare ingredients" },
+    { title: "Chef De Partie", salary: 1085, exp: "1 yr", desc: "1 yr as commis chef, Halal compliance, preparing dishes, ensuring safe food handling, manage & train kitchen staff" },
+    { title: "Sous Chef", salary: 1628, exp: "Exp'd", desc: "Cook & supervise food preparation, assisting Chef De Cuisine, development of new menus, effective cost management, train staff" },
+    { title: "Chef De Cuisine", salary: 3038, exp: "Senior", desc: "Setting up recipes & production systems, sourcing from approved suppliers, delegating tasks, manage schedules & training, resolving issues" },
   ]},
   { family: "Retail", sector: "General", levels: [
-    { title: "Shelf Filler", salary: 500 },
-    { title: "Shop Assistant", salary: 543 },
-    { title: "Cashier", salary: 597 },
-    { title: "Shop Supervisor", salary: 868 },
-    { title: "Shop Manager", salary: 1628 },
+    { title: "Shelf Filler", salary: 500, exp: "Entry", desc: "Stocking & re-stocking shelves, organizing product areas, keeping store clean, attaching price tags, stockroom arrangement" },
+    { title: "Shop Assistant", salary: 543, exp: "Entry", desc: "Opening & closing shop, inventory checking, assisting customers, reporting discrepancies, product knowledge, promoting special offers" },
+    { title: "Cashier", salary: 597, exp: "Entry", desc: "Processing payments (cash/card/voucher), balancing cash registers, promoting special offers, ensuring daily cash flow, high accuracy" },
+    { title: "Shop Supervisor", salary: 868, exp: "Exp'd", desc: "Dealing with customer complaints, requesting & receiving delivery, product knowledge, training & monitoring staff, store display" },
+    { title: "Shop Manager", salary: 1628, exp: "Exp'd", desc: "Handling orders & payments to suppliers, report store repairs, planning store display, handle shop keys, resolve complaints, plan promotions" },
   ]},
   { family: "Hospitality (Restaurant)", sector: "General", levels: [
-    { title: "Waiter / Waitress", salary: 492 },
-    { title: "Maître D' / Host", salary: 868 },
-    { title: "Asst Restaurant Manager", salary: 977 },
-    { title: "Restaurant Manager", salary: 1628 },
+    { title: "Waiter / Waitress", salary: 492, exp: "Entry", desc: "Welcoming & escorting customers, taking menu orders, accepting payments, food safety & hygiene knowledge, table setup" },
+    { title: "Maître D' / Host", salary: 868, exp: "Exp'd", desc: "Supervise waiter/waitress performance, table setup, customer feedback, manage restaurant presentation, cash register operations" },
+    { title: "Asst Restaurant Manager", salary: 977, exp: "Exp'd", desc: "Assisting restaurant manager, ensuring restaurant cleanliness, implementing business plans, staff training, health & food safety compliance" },
+    { title: "Restaurant Manager", salary: 1628, exp: "Senior", desc: "Scheduling operations, marketing strategies, inventory management, recruit & supervise staff, quality control, revenue & expense reports" },
   ]},
   { family: "Teaching", sector: "General", levels: [
-    { title: "Teachers Aide", salary: 492 },
-    { title: "Teacher", salary: 868 },
-    { title: "Head of Teaching Dept", salary: 1844 },
-    { title: "Senior Teacher", salary: 2604 },
-    { title: "Principal", salary: 3146 },
+    { title: "Teachers Aide", salary: 492, exp: "Entry", desc: "Assisting teacher in daily lessons, promoting early education & literacy, guiding students, encouraging interaction, reports to teacher" },
+    { title: "Teacher", salary: 868, exp: "Registered", desc: "Registered with Private Education Section, preparing lesson plans, assigning & grading homework, communicate with parents, monitor progress" },
+    { title: "Head of Teaching Dept", salary: 1844, exp: "Exp'd", desc: "Updating & reviewing lesson plans, observing teachers' capacity, conducting workshops, resolving teaching-related issues, providing guidance" },
+    { title: "Senior Teacher", salary: 2604, exp: "Exp'd", desc: "Assisting Principal, receiving & cascading steers from Ministry of Education, reviewing teachers' capacity, creating learning environment" },
+    { title: "Principal", salary: 3146, exp: "Senior", desc: "Leading school to achieve national aspirations, observing & reviewing all staff, report to higher management, assigning duties, guidance" },
   ]},
   { family: "Hospitality (Hotels)", sector: "General", levels: [
-    { title: "Bell Boy / Hotel Porter", salary: 492 },
-    { title: "Front Desk Clerk", salary: 543 },
-    { title: "Concierge", salary: 597 },
-    { title: "Front Office Manager", salary: 1410 },
+    { title: "Bell Boy / Hotel Porter", salary: 492, exp: "Entry", desc: "Welcoming guests, knowledge of hotel facilities & tourist attractions, transferring luggage, reservations, delivering room service" },
+    { title: "Front Desk Clerk", salary: 543, exp: "Exp'd", desc: "Welcoming & caring for guests, processing payments, closing guest accounts, assisting with reservations & enquiries, multi-lingual" },
+    { title: "Concierge", salary: 597, exp: "Exp'd", desc: "Extensive knowledge of Brunei tourist attractions, online bookings, recommending venues, communicating reservations, guest assistance" },
+    { title: "Front Office Manager", salary: 1410, exp: "Senior", desc: "Coordinating all front-desk activities, revenue & occupancy forecasting, budget management, staff training & recruitment, guest complaints" },
   ]},
   // === ENERGY SECTOR (OIL & GAS) ===
   { family: "Welder", sector: "Energy", levels: [
-    { title: "L1 Welder Assistant (3G)", salary: 700 },
-    { title: "L2 Basic Welder (6GR)", salary: 1200 },
-    { title: "L3 Advanced CRA Welder", salary: 1800 },
-    { title: "L4 Asst Welding Supervisor", salary: 2500 },
-    { title: "L5 Welding Supervisor", salary: 3500 },
+    { title: "L1 Welder Assistant (3G)", salary: 700, exp: "0-2 yrs", desc: "AWS D1.1/EEMUA 158 qualification, production welding on minor structural joints, tacking & fillet welds, piping welding practice" },
+    { title: "L2 Basic Welder (6GR)", salary: 1200, exp: "2-4 yrs", desc: "iSkill ISQ Welding L2, SMAW & GTAW welding, 6G & 6GR carbon steel qualified, mentoring techniques" },
+    { title: "L3 Advanced CRA Welder", salary: 1800, exp: "3-5 yrs", desc: "iSkill NTech Welding L3, CRA welding (SS, DSS, SDSS), complex welds for pressure piping/vessels, read & layout complex prints" },
+    { title: "L4 Asst Welding Supervisor", salary: 2500, exp: "4-7 yrs", desc: "ASME IX + API 1104/DNV OS F101, production welding all positions, qualified to train & inspect, mentoring techniques" },
+    { title: "L5 Welding Supervisor", salary: 3500, exp: "7+ yrs", desc: "Dynamic leader, optimize welding productivity, project management methodology, welding economics & inspection knowledge, analytical skills" },
   ]},
   { family: "Marker Fitter", sector: "Energy", levels: [
-    { title: "L1 Marker Fitter Assistant", salary: 700 },
-    { title: "L2 Basic Marker Fitter", salary: 1000 },
-    { title: "L3 Advanced Marker Fitter", salary: 1500 },
-    { title: "L4 Asst Construction Supv", salary: 2000 },
-    { title: "L5 Construction Supervisor", salary: 3500 },
+    { title: "L1 Marker Fitter Assistant", salary: 700, exp: "0-1 yrs", desc: "O Level, read structural & piping drawings, basic measurements & marking, grinding & bevelling, flame cutting" },
+    { title: "L2 Basic Marker Fitter", salary: 1000, exp: "1-2 yrs", desc: "iSkill ISQ MF L2, identify piping components & materials, compute maths for joining pipes, marking & fit-up structural joints" },
+    { title: "L3 Advanced Marker Fitter", salary: 1500, exp: "3-5 yrs", desc: "iSkill NTech MF L3, complex structural configurations (TKY connections), proficient in flame cutting & grinding" },
+    { title: "L4 Asst Construction Supv", salary: 2000, exp: "4-7 yrs", desc: "Reports to CSV, supervision of offshore construction works, advanced knowledge of 5 key elements, developed leadership skills" },
+    { title: "L5 Construction Supervisor", salary: 3500, exp: "7+ yrs", desc: "Full supervision of offshore construction, ensure works completed per approved scope, construction management systems improvements" },
   ]},
   { family: "Rigger", sector: "Energy", levels: [
-    { title: "L1 Rigger Assistant", salary: 700 },
-    { title: "L2 Rigger", salary: 1000 },
-    { title: "L3 Rigger Leadman", salary: 1500 },
-    { title: "L4 Rigger Supv / PIC", salary: 2500 },
+    { title: "L1 Rigger Assistant", salary: 700, exp: "0-1 yrs", desc: "O Level, rigger level 1, minimum 6 months workplace logbook with supervised rigging activity" },
+    { title: "L2 Rigger", salary: 1000, exp: "1-2 yrs", desc: "iSkill ISQ Rigger L2, conduct rigging for lighting operations, understand lift planning preparations, interpret safe lifting info" },
+    { title: "L3 Rigger Leadman", salary: 1500, exp: "2-5 yrs", desc: "iSkill NTech Rigger L3, lift planner level I (200 hours classroom), workplace logbook with supervised lift planning" },
+    { title: "L4 Rigger Supv / PIC", salary: 2500, exp: "5+ yrs", desc: "PIC classroom training minimum 200 hours plus PIC assessment, refresh minimum 40 hours and assessment" },
   ]},
   { family: "Blaster Painter", sector: "Energy", levels: [
-    { title: "L1 BP Assistant", salary: 700 },
-    { title: "L2 Basic Blaster Painter", salary: 1000 },
-    { title: "L3 BP Leadman", salary: 1500 },
-    { title: "L4 BP Supervisor", salary: 2500 },
-    { title: "L5 BP Inspector", salary: 3500 },
+    { title: "L1 BP Assistant", salary: 700, exp: "0-1 yrs", desc: "O Level, blasting using conventional system, safety system protection, stripe coats, SRI coating application, spray painting primers" },
+    { title: "L2 Basic Blaster Painter", salary: 1000, exp: "1-2 yrs", desc: "iSkill ISQ BP L2, hook up blasting equipment, secure high-pressure line, test air pressure, reading WFT/DFT" },
+    { title: "L3 BP Leadman", salary: 1500, exp: "3-5 yrs", desc: "iSkill NTech BP L3, person in charge of deck level, trouble shooting, verifies system installation, interface with frontlines" },
+    { title: "L4 BP Supervisor", salary: 2500, exp: "4-7 yrs", desc: "Person in charge of platform activities, permit to work holder, overall safety responsibility, toolbox talks, work distribution" },
+    { title: "L5 BP Inspector", salary: 3500, exp: "7+ yrs", desc: "Qualified engineering background or 5 yrs experience with min NACE 2, overall area responsibility, quality standards & ITP" },
   ]},
   { family: "Scaffolder", sector: "Energy", levels: [
-    { title: "L1 Scaffolder Assistant", salary: 700 },
-    { title: "L2 Scaffolder Basic", salary: 1000 },
-    { title: "L3 Advanced Scaffolder", salary: 1500 },
-    { title: "L4 Scaffolder Inspector", salary: 2500 },
+    { title: "L1 Scaffolder Assistant", salary: 700, exp: "0-1 yrs", desc: "O Level, material handling, familiarisation with equipment & environment, erect basic scaffolding (independent, birdcage, tower mobile)" },
+    { title: "L2 Scaffolder Basic", salary: 1000, exp: "1-2 yrs", desc: "iSkill ISQ Scaffolder L2, complete basic training Part A&B, erect scaffolding with prefabricated beams, loading bays, cantilever" },
+    { title: "L3 Advanced Scaffolder", salary: 1500, exp: "2-5 yrs", desc: "iSkill NTech Scaffolder L3, charge hand in scaffolding gang, complex scaffold structures, risk assessments & method statements" },
+    { title: "L4 Scaffolder Inspector", salary: 2500, exp: "5+ yrs", desc: "Inspecting & checking scaffolds for safe use, signing certificates & registers per statutory regulations, codes of practice" },
   ]},
   { family: "Fire Watcher", sector: "Energy", levels: [
-    { title: "L1 Fire Watcher Field Support", salary: 700 },
-    { title: "L2 Fire Watcher", salary: 1000 },
+    { title: "L1 Fire Watcher Field Support", salary: 700, exp: "0-1 yrs", desc: "O Level, completed mandatory site HSSE training, familiarization to oil & gas works, support welder/marker during hot work" },
+    { title: "L2 Fire Watcher", salary: 1000, exp: "1-2 yrs", desc: "Min 6 months active works, fire-fighting training, use all types of fire extinguishers, gas testing requirements, read & write English" },
   ]},
   { family: "Coating", sector: "Energy", levels: [
-    { title: "L1 Coating Field Support", salary: 700 },
-    { title: "L2 Painter", salary: 1000 },
-    { title: "L3 Blaster Painter", salary: 1300 },
-    { title: "L4 Coating Supervisor", salary: 1800 },
-    { title: "L5 Coating Inspector", salary: 2300 },
+    { title: "L1 Coating Field Support", salary: 700, exp: "0-1 yrs", desc: "Completed HSSE training, familiarization to oil & gas construction, supporting skill workers during constructions" },
+    { title: "L2 Painter", salary: 1000, exp: "0.5-1 yr", desc: "6 months as coating FS, carry out painting works with basic tools, painter trainee 6 months with structured OJT" },
+    { title: "L3 Blaster Painter", salary: 1300, exp: "1-2 yrs", desc: "6 months as painter, achieve surface preparation using blasting equipment, application of coating per specifications" },
+    { title: "L4 Coating Supervisor", salary: 1800, exp: "2-3.5 yrs", desc: "12 months as B/SP, knowledge on HSE/quality/schedule, planning & organisation, NACE Inspector Level 1 or BGAS Grade 2" },
+    { title: "L5 Coating Inspector", salary: 2300, exp: "3.5+ yrs", desc: "12 months as supervisor, coating tests (cleanliness, profiles, adhesion), corrosion theory, NACE Level 2 or BGAS Grade 1" },
   ]},
   { family: "Civil Works", sector: "Energy", levels: [
-    { title: "L1 Civil Field Support", salary: 700 },
-    { title: "L2 Civil Skill Worker", salary: 1000 },
-    { title: "L3 Civil Construction", salary: 1300 },
-    { title: "L4 Civil Construction Inspector", salary: 1800 },
+    { title: "L1 Civil Field Support", salary: 700, exp: "0 yrs", desc: "O Level, completed HSSE training, familiarization to oil & gas civil construction, supporting skill workers" },
+    { title: "L2 Civil Skill Worker", salary: 1000, exp: "1-2 yrs", desc: "L3 NTEC in Building Craft, 2-3 skill works (brick layer, carpenter, concreter, mason, plumber, roofer, steel bender)" },
+    { title: "L3 Civil Construction", salary: 1300, exp: "2-4 yrs", desc: "L4 HNTec in Civil Engineering, knowledge on HSE/quality/schedule, understand drawings, planning & organisation" },
+    { title: "L4 Civil Construction Inspector", salary: 1800, exp: "4-5 yrs", desc: "L5 Diploma in Civil Engineering, perform inspection tasks per agreed test plan, working with engineer & NDT/DT specialist" },
   ]},
   { family: "Industrial Cleaner", sector: "Energy", levels: [
-    { title: "L1 IC Field Support", salary: 700 },
-    { title: "L2 Industrial Cleaner", salary: 1000 },
-    { title: "L3 IC Supervisor", salary: 1300 },
+    { title: "L1 IC Field Support", salary: 700, exp: "0-1 yrs", desc: "O Level, completed HSSE training, introduction to oil & gas industrial cleaning, supporting team through cleaning activities" },
+    { title: "L2 Industrial Cleaner", salary: 1000, exp: "1-1.5 yrs", desc: "6 months as FS, industrial cleaning on cooling tower, equipment, tanks, drainage, use of HP jetting machine & industrial vacuum" },
+    { title: "L3 IC Supervisor", salary: 1300, exp: "1.5-2 yrs", desc: "12 months as IC, responsible for HSE/quality/schedule of cleaning works, planning & organisation, prepare tools & equipment" },
   ]},
   { family: "Insulator", sector: "Energy", levels: [
-    { title: "L1 Insulator Field Support", salary: 700 },
-    { title: "L2 Basic Insulator", salary: 1000 },
-    { title: "L3 Insulator / Fabricator", salary: 1300 },
-    { title: "L4 Insulator Supervisor", salary: 1800 },
-    { title: "L5 Insulation Inspector", salary: 3000 },
+    { title: "L1 Insulator Field Support", salary: 700, exp: "0-1 yrs", desc: "Completed HSSE training, introduction to oil & gas insulation works, familiarization of tools/materials/equipment" },
+    { title: "L2 Basic Insulator", salary: 1000, exp: "1-2 yrs", desc: "12 months basic insulator trainee with structured OJT, basic insulation on flanges/pipe/valves, work with less supervision" },
+    { title: "L3 Insulator / Fabricator", salary: 1300, exp: "2-4 yrs", desc: "All types of complex thermal & cryogenic insulations, read drawings & fabricate per quality standard, 24 months OJT" },
+    { title: "L4 Insulator Supervisor", salary: 1800, exp: "4-5.5 yrs", desc: "3 yrs as insulator/fabricator, knowledge on HSE/quality/schedule, understand drawings, working with inspector & engineer" },
+    { title: "L5 Insulation Inspector", salary: 3000, exp: "5.5+ yrs", desc: "18 months inspector trainee, ICorr Insulation Inspector Level 1, perform inspection per test plan, work with NDT/DT specialist" },
   ]},
 ];
 
@@ -376,6 +376,117 @@ const HomePage = ({ setActive }) => (
   </div>
 );
 
+// --- MPEC SECTION (with expandable descriptions) ---
+const MpecSection = () => {
+  const [expanded, setExpanded] = useState(null); // "familyIdx-levelIdx"
+  const toggleExpand = (key) => setExpanded(expanded === key ? null : key);
+
+  return (
+    <div>
+      <p style={{ fontSize: 13, color: COLORS.textLight, marginBottom: 16 }}>The MPEC Salary Guideline (2023 Edition) recommends minimum salary scales for 22 job families and 100 positions in the private sector, developed from data on 114,000+ employees. <span style={{ fontSize: 12, fontStyle: "italic" }}>Click any role to see requirements.</span></p>
+      {["General", "Energy"].map(sector => (
+        <div key={sector} style={{ marginBottom: 32 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: sector === "Energy" ? COLORS.primaryDark : COLORS.accent1, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16, paddingBottom: 8, borderBottom: `2px solid ${sector === "Energy" ? COLORS.primaryDark : COLORS.accent1}20` }}>
+            {sector === "Energy" ? "⛽ Energy Sector (Oil & Gas)" : "🏢 General Sector"}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {MPEC_GUIDELINES.filter(f => f.sector === sector).map((fam, fi) => {
+          const famKey = `${sector}-${fi}`;
+          const accentColor = sector === "Energy" ? COLORS.primaryDark : COLORS.accent1;
+          return (
+          <div key={fi} style={{ background: COLORS.bgCard, borderRadius: 14, padding: "20px 24px", border: `1px solid ${COLORS.border}` }}>
+            <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 20 }}>{fam.family}</div>
+            {/* Arrow flow boxes */}
+            <div style={{ display: "flex", alignItems: "stretch", gap: 0, overflowX: "auto", paddingBottom: 4 }}>
+              {fam.levels.map((level, j) => {
+                const isLast = j === fam.levels.length - 1;
+                const isFirst = j === 0;
+                const progress = fam.levels.length > 1 ? j / (fam.levels.length - 1) : 0;
+                const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
+                const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
+                const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
+                const boxColor = `rgb(${r},${g},${b})`;
+                const levelKey = `${famKey}-${j}`;
+                const isExpanded = expanded === levelKey;
+                return (
+                  <div key={j} style={{ display: "flex", alignItems: "center", flex: "1 1 0", minWidth: 0 }}>
+                    <div onClick={() => toggleExpand(levelKey)} style={{
+                      flex: "1 1 0", minWidth: 90, padding: "14px 10px", textAlign: "center", cursor: "pointer",
+                      background: boxColor, borderRadius: isFirst ? "10px 0 0 10px" : isLast ? "0 10px 10px 0" : 0,
+                      borderRight: isLast ? "none" : "2px solid rgba(255,255,255,0.4)",
+                      display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
+                      outline: isExpanded ? "3px solid #fff" : "none", outlineOffset: -3,
+                      opacity: expanded && !isExpanded ? 0.7 : 1, transition: "opacity 0.2s",
+                    }}>
+                      <div style={{ fontSize: 11, color: "#fff", fontWeight: 500, lineHeight: 1.25, opacity: 0.92 }}>
+                        {level.title}
+                      </div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>
+                        {isLast && fam.levels.at(-1).salary >= 1400 ? "> " : ""}BND {level.salary.toLocaleString()}
+                      </div>
+                      <div style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", marginTop: 2 }}>{level.exp}</div>
+                    </div>
+                    {!isLast && (
+                      <div style={{
+                        width: 0, height: 0, flexShrink: 0,
+                        borderTop: "26px solid transparent", borderBottom: "26px solid transparent",
+                        borderLeft: `14px solid ${boxColor}`,
+                        marginRight: -14, zIndex: 1,
+                      }} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {/* Expanded description panel */}
+            {expanded && expanded.startsWith(famKey) && (() => {
+              const levelIdx = parseInt(expanded.split("-").pop());
+              const level = fam.levels[levelIdx];
+              if (!level) return null;
+              const progress = fam.levels.length > 1 ? levelIdx / (fam.levels.length - 1) : 0;
+              const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
+              const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
+              const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
+              return (
+                <div style={{
+                  marginTop: 8, padding: "14px 18px", borderRadius: 10, 
+                  background: `rgba(${r},${g},${b},0.08)`, border: `1px solid rgba(${r},${g},${b},0.25)`,
+                  animation: "fadeUp 0.2s ease-out",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.text }}>{level.title}</div>
+                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                      <span style={{ fontSize: 12, color: COLORS.textMuted }}>Exp: {level.exp}</span>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: `rgb(${r},${g},${b})` }}>BND {level.salary.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 13, color: COLORS.textLight, lineHeight: 1.6 }}>
+                    <span style={{ fontWeight: 600, fontSize: 11, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>Key Requirements: </span>
+                    {level.desc}
+                  </div>
+                </div>
+              );
+            })()}
+            {/* Footer */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
+              <div style={{ fontSize: 11, color: COLORS.textMuted }}>{fam.levels.length} career levels • Click to see details</div>
+              <div style={{ fontSize: 12, color: COLORS.textLight }}>
+                <span style={{ fontWeight: 600, color: accentColor }}>BND {fam.levels[0].salary.toLocaleString()}</span>
+                <span style={{ margin: "0 6px" }}>→</span>
+                <span style={{ fontWeight: 600, color: COLORS.greenDark }}>BND {fam.levels.at(-1).salary.toLocaleString()}{fam.levels.at(-1).salary >= 1400 ? "+" : ""}</span>
+              </div>
+            </div>
+          </div>
+          );
+        })}
+          </div>
+        </div>
+      ))}
+      <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 16 }}>Source: <a href="https://www.mpec.gov.bn/Lists/EmployeePoliciesAndGuidelines/Attachments/8/Salary%20Guideline%20-%202023%20Edition.pdf" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>MPEC Salary Guideline 2023 Edition</a> — Full job descriptions available in the PDF</p>
+    </div>
+  );
+};
+
 // --- EXPLORE PAGE ---
 const ExplorePage = () => {
   const [view, setView] = useState("industry");
@@ -449,76 +560,7 @@ const ExplorePage = () => {
       )}
 
       {view === "mpec" && (
-        <div>
-          <p style={{ fontSize: 13, color: COLORS.textLight, marginBottom: 16 }}>The MPEC Salary Guideline (2023 Edition) recommends minimum salary scales for 22 job families and 100 positions in the private sector, developed from data on 114,000+ employees.</p>
-          {["General", "Energy"].map(sector => (
-            <div key={sector} style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: sector === "Energy" ? COLORS.primaryDark : COLORS.accent1, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16, paddingBottom: 8, borderBottom: `2px solid ${sector === "Energy" ? COLORS.primaryDark : COLORS.accent1}20` }}>
-                {sector === "Energy" ? "⛽ Energy Sector (Oil & Gas)" : "🏢 General Sector"}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {MPEC_GUIDELINES.filter(f => f.sector === sector).map((fam, i) => {
-              const accentColor = sector === "Energy" ? COLORS.primaryDark : COLORS.accent1;
-              return (
-              <div key={i} style={{ background: COLORS.bgCard, borderRadius: 14, padding: "20px 24px", border: `1px solid ${COLORS.border}` }}>
-                <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 20 }}>{fam.family}</div>
-                {/* Arrow flow boxes */}
-                <div style={{ display: "flex", alignItems: "stretch", gap: 0, overflowX: "auto", paddingBottom: 8 }}>
-                  {fam.levels.map((level, j) => {
-                    const isLast = j === fam.levels.length - 1;
-                    const isFirst = j === 0;
-                    const progress = fam.levels.length > 1 ? j / (fam.levels.length - 1) : 0;
-                    // Gradient from light blue to accent color
-                    const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
-                    const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
-                    const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
-                    const boxColor = `rgb(${r},${g},${b})`;
-                    return (
-                      <div key={j} style={{ display: "flex", alignItems: "center", flex: "1 1 0", minWidth: 0 }}>
-                        {/* Box */}
-                        <div style={{
-                          flex: "1 1 0", minWidth: 90, padding: "14px 10px", textAlign: "center",
-                          background: boxColor, borderRadius: isFirst ? "10px 0 0 10px" : isLast ? "0 10px 10px 0" : 0,
-                          borderRight: isLast ? "none" : "2px solid rgba(255,255,255,0.4)",
-                          display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
-                        }}>
-                          <div style={{ fontSize: 11, color: "#fff", fontWeight: 500, lineHeight: 1.25, opacity: 0.92 }}>
-                            {level.title}
-                          </div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>
-                            {isLast && fam.levels.at(-1).salary >= 1400 ? "> " : ""}BND {level.salary.toLocaleString()}
-                          </div>
-                        </div>
-                        {/* Arrow */}
-                        {!isLast && (
-                          <div style={{
-                            width: 0, height: 0, flexShrink: 0,
-                            borderTop: "22px solid transparent", borderBottom: "22px solid transparent",
-                            borderLeft: `14px solid ${boxColor}`,
-                            marginRight: -14, zIndex: 1,
-                          }} />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-                {/* Footer */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
-                  <div style={{ fontSize: 11, color: COLORS.textMuted }}>{fam.levels.length} career levels</div>
-                  <div style={{ fontSize: 12, color: COLORS.textLight }}>
-                    <span style={{ fontWeight: 600, color: accentColor }}>BND {fam.levels[0].salary.toLocaleString()}</span>
-                    <span style={{ margin: "0 6px" }}>→</span>
-                    <span style={{ fontWeight: 600, color: COLORS.greenDark }}>BND {fam.levels.at(-1).salary.toLocaleString()}{fam.levels.at(-1).salary >= 1400 ? "+" : ""}</span>
-                  </div>
-                </div>
-              </div>
-              );
-            })}
-              </div>
-            </div>
-          ))}
-          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 16 }}>Source: <a href="https://www.mpec.gov.bn/Lists/EmployeePoliciesAndGuidelines/Attachments/8/Salary%20Guideline%20-%202023%20Edition.pdf" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>MPEC Salary Guideline 2023 Edition</a> (mpec.gov.bn)</p>
-        </div>
+        <MpecSection />
       )}
     </div>
   );
