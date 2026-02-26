@@ -376,14 +376,28 @@ const HomePage = ({ setActive }) => (
   </div>
 );
 
-// --- MPEC SECTION (with expandable descriptions) ---
+// --- MPEC SECTION (with expandable descriptions, mobile-responsive) ---
 const MpecSection = () => {
   const [expanded, setExpanded] = useState(null); // "familyIdx-levelIdx"
   const toggleExpand = (key) => setExpanded(expanded === key ? null : key);
+  // Responsive: detect mobile
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 700);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 700);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const getLevelColor = (accentColor, progress) => {
+    const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
+    const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
+    const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
+    return { r, g, b, css: `rgb(${r},${g},${b})` };
+  };
 
   return (
     <div>
-      <p style={{ fontSize: 13, color: COLORS.textLight, marginBottom: 16 }}>The MPEC Salary Guideline (2023 Edition) recommends minimum salary scales for 22 job families and 100 positions in the private sector, developed from data on 114,000+ employees. <span style={{ fontSize: 12, fontStyle: "italic" }}>Click any role to see requirements.</span></p>
+      <p style={{ fontSize: 13, color: COLORS.textLight, marginBottom: 16 }}>The MPEC Salary Guideline (2023 Edition) recommends minimum salary scales for 22 job families and 100 positions in the private sector, developed from data on 114,000+ employees. <span style={{ fontSize: 12, fontStyle: "italic" }}>Tap any role to see requirements.</span></p>
       {["General", "Energy"].map(sector => (
         <div key={sector} style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 14, fontWeight: 600, color: sector === "Energy" ? COLORS.primaryDark : COLORS.accent1, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16, paddingBottom: 8, borderBottom: `2px solid ${sector === "Energy" ? COLORS.primaryDark : COLORS.accent1}20` }}>
@@ -394,82 +408,138 @@ const MpecSection = () => {
           const famKey = `${sector}-${fi}`;
           const accentColor = sector === "Energy" ? COLORS.primaryDark : COLORS.accent1;
           return (
-          <div key={fi} style={{ background: COLORS.bgCard, borderRadius: 14, padding: "20px 24px", border: `1px solid ${COLORS.border}` }}>
-            <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 20 }}>{fam.family}</div>
-            {/* Arrow flow boxes */}
-            <div style={{ display: "flex", alignItems: "stretch", gap: 0, overflowX: "auto", paddingBottom: 4 }}>
-              {fam.levels.map((level, j) => {
-                const isLast = j === fam.levels.length - 1;
-                const isFirst = j === 0;
-                const progress = fam.levels.length > 1 ? j / (fam.levels.length - 1) : 0;
-                const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
-                const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
-                const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
-                const boxColor = `rgb(${r},${g},${b})`;
-                const levelKey = `${famKey}-${j}`;
-                const isExpanded = expanded === levelKey;
-                return (
-                  <div key={j} style={{ display: "flex", alignItems: "center", flex: "1 1 0", minWidth: 0 }}>
-                    <div onClick={() => toggleExpand(levelKey)} style={{
-                      flex: "1 1 0", minWidth: 90, padding: "14px 10px", textAlign: "center", cursor: "pointer",
-                      background: boxColor, borderRadius: isFirst ? "10px 0 0 10px" : isLast ? "0 10px 10px 0" : 0,
-                      borderRight: isLast ? "none" : "2px solid rgba(255,255,255,0.4)",
-                      display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
-                      outline: isExpanded ? "3px solid #fff" : "none", outlineOffset: -3,
-                      opacity: expanded && !isExpanded ? 0.7 : 1, transition: "opacity 0.2s",
-                    }}>
-                      <div style={{ fontSize: 11, color: "#fff", fontWeight: 500, lineHeight: 1.25, opacity: 0.92 }}>
-                        {level.title}
+          <div key={fi} style={{ background: COLORS.bgCard, borderRadius: 14, padding: isMobile ? "16px 14px" : "20px 24px", border: `1px solid ${COLORS.border}` }}>
+            <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: isMobile ? 14 : 20 }}>{fam.family}</div>
+
+            {/* === MOBILE: Vertical timeline layout === */}
+            {isMobile ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                {fam.levels.map((level, j) => {
+                  const isLast = j === fam.levels.length - 1;
+                  const progress = fam.levels.length > 1 ? j / (fam.levels.length - 1) : 0;
+                  const color = getLevelColor(accentColor, progress);
+                  const levelKey = `${famKey}-${j}`;
+                  const isExp = expanded === levelKey;
+                  return (
+                    <div key={j}>
+                      {/* Level row */}
+                      <div onClick={() => toggleExpand(levelKey)} style={{
+                        display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
+                        padding: "10px 12px", borderRadius: 10,
+                        background: isExp ? `rgba(${color.r},${color.g},${color.b},0.1)` : "transparent",
+                        transition: "background 0.2s",
+                      }}>
+                        {/* Level dot + line */}
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0, alignSelf: "stretch" }}>
+                          <div style={{
+                            width: 14, height: 14, borderRadius: "50%", flexShrink: 0,
+                            background: color.css, border: isExp ? "3px solid #fff" : "2px solid #fff",
+                            boxShadow: isExp ? `0 0 0 2px ${color.css}` : `0 0 0 1px ${color.css}40`,
+                          }} />
+                          {!isLast && <div style={{ flex: 1, width: 2, background: `${color.css}30`, minHeight: 10 }} />}
+                        </div>
+                        {/* Level info */}
+                        <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, minWidth: 0 }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, lineHeight: 1.3 }}>{level.title}</div>
+                            <div style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 1 }}>{level.exp}</div>
+                          </div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: color.css, whiteSpace: "nowrap", flexShrink: 0 }}>
+                            {isLast && level.salary >= 1400 ? "> " : ""}BND {level.salary.toLocaleString()}
+                          </div>
+                        </div>
+                        {/* Expand icon */}
+                        <div style={{ fontSize: 12, color: COLORS.textMuted, flexShrink: 0, transform: isExp ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}>▼</div>
                       </div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>
-                        {isLast && fam.levels.at(-1).salary >= 1400 ? "> " : ""}BND {level.salary.toLocaleString()}
+                      {/* Expanded description */}
+                      {isExp && (
+                        <div style={{
+                          marginLeft: 30, marginRight: 4, marginBottom: 6, padding: "10px 14px", borderRadius: 8,
+                          background: `rgba(${color.r},${color.g},${color.b},0.06)`, borderLeft: `3px solid ${color.css}`,
+                        }}>
+                          <div style={{ fontSize: 12, color: COLORS.textLight, lineHeight: 1.6 }}>
+                            <span style={{ fontWeight: 600, fontSize: 10, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>Requirements: </span>
+                            {level.desc}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* === DESKTOP: Horizontal arrow flow === */
+              <>
+                <div style={{ display: "flex", alignItems: "stretch", gap: 0, overflowX: "auto", paddingBottom: 4 }}>
+                  {fam.levels.map((level, j) => {
+                    const isLast = j === fam.levels.length - 1;
+                    const isFirst = j === 0;
+                    const progress = fam.levels.length > 1 ? j / (fam.levels.length - 1) : 0;
+                    const color = getLevelColor(accentColor, progress);
+                    const levelKey = `${famKey}-${j}`;
+                    const isExp = expanded === levelKey;
+                    return (
+                      <div key={j} style={{ display: "flex", alignItems: "center", flex: "1 1 0", minWidth: 0 }}>
+                        <div onClick={() => toggleExpand(levelKey)} style={{
+                          flex: "1 1 0", minWidth: 100, padding: "14px 10px", textAlign: "center", cursor: "pointer",
+                          background: color.css, borderRadius: isFirst ? "10px 0 0 10px" : isLast ? "0 10px 10px 0" : 0,
+                          borderRight: isLast ? "none" : "2px solid rgba(255,255,255,0.4)",
+                          display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
+                          outline: isExp ? "3px solid #fff" : "none", outlineOffset: -3,
+                          opacity: expanded && !isExp ? 0.7 : 1, transition: "opacity 0.2s",
+                        }}>
+                          <div style={{ fontSize: 11, color: "#fff", fontWeight: 500, lineHeight: 1.25, opacity: 0.92 }}>
+                            {level.title}
+                          </div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>
+                            {isLast && level.salary >= 1400 ? "> " : ""}BND {level.salary.toLocaleString()}
+                          </div>
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", marginTop: 2 }}>{level.exp}</div>
+                        </div>
+                        {!isLast && (
+                          <div style={{
+                            width: 0, height: 0, flexShrink: 0,
+                            borderTop: "26px solid transparent", borderBottom: "26px solid transparent",
+                            borderLeft: `14px solid ${color.css}`,
+                            marginRight: -14, zIndex: 1,
+                          }} />
+                        )}
                       </div>
-                      <div style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", marginTop: 2 }}>{level.exp}</div>
-                    </div>
-                    {!isLast && (
-                      <div style={{
-                        width: 0, height: 0, flexShrink: 0,
-                        borderTop: "26px solid transparent", borderBottom: "26px solid transparent",
-                        borderLeft: `14px solid ${boxColor}`,
-                        marginRight: -14, zIndex: 1,
-                      }} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            {/* Expanded description panel */}
-            {expanded && expanded.startsWith(famKey) && (() => {
-              const levelIdx = parseInt(expanded.split("-").pop());
-              const level = fam.levels[levelIdx];
-              if (!level) return null;
-              const progress = fam.levels.length > 1 ? levelIdx / (fam.levels.length - 1) : 0;
-              const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
-              const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
-              const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
-              return (
-                <div style={{
-                  marginTop: 8, padding: "14px 18px", borderRadius: 10, 
-                  background: `rgba(${r},${g},${b},0.08)`, border: `1px solid rgba(${r},${g},${b},0.25)`,
-                  animation: "fadeUp 0.2s ease-out",
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.text }}>{level.title}</div>
-                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                      <span style={{ fontSize: 12, color: COLORS.textMuted }}>Exp: {level.exp}</span>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: `rgb(${r},${g},${b})` }}>BND {level.salary.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <div style={{ fontSize: 13, color: COLORS.textLight, lineHeight: 1.6 }}>
-                    <span style={{ fontWeight: 600, fontSize: 11, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>Key Requirements: </span>
-                    {level.desc}
-                  </div>
+                    );
+                  })}
                 </div>
-              );
-            })()}
+                {/* Desktop expanded description panel */}
+                {expanded && expanded.startsWith(famKey) && (() => {
+                  const levelIdx = parseInt(expanded.split("-").pop());
+                  const level = fam.levels[levelIdx];
+                  if (!level) return null;
+                  const progress = fam.levels.length > 1 ? levelIdx / (fam.levels.length - 1) : 0;
+                  const color = getLevelColor(accentColor, progress);
+                  return (
+                    <div style={{
+                      marginTop: 8, padding: "14px 18px", borderRadius: 10,
+                      background: `rgba(${color.r},${color.g},${color.b},0.08)`, border: `1px solid rgba(${color.r},${color.g},${color.b},0.25)`,
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.text }}>{level.title}</div>
+                        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                          <span style={{ fontSize: 12, color: COLORS.textMuted }}>Exp: {level.exp}</span>
+                          <span style={{ fontSize: 15, fontWeight: 700, color: color.css }}>BND {level.salary.toLocaleString()}</span>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 13, color: COLORS.textLight, lineHeight: 1.6 }}>
+                        <span style={{ fontWeight: 600, fontSize: 11, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>Key Requirements: </span>
+                        {level.desc}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
             {/* Footer */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
-              <div style={{ fontSize: 11, color: COLORS.textMuted }}>{fam.levels.length} career levels • Click to see details</div>
+              <div style={{ fontSize: 11, color: COLORS.textMuted }}>{fam.levels.length} career levels</div>
               <div style={{ fontSize: 12, color: COLORS.textLight }}>
                 <span style={{ fontWeight: 600, color: accentColor }}>BND {fam.levels[0].salary.toLocaleString()}</span>
                 <span style={{ margin: "0 6px" }}>→</span>
