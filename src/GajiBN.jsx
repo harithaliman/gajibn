@@ -1603,8 +1603,7 @@ export default function GajiBN() {
       const { data, error } = await supabase
         .from("submissions")
         .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100);
+        .order("created_at", { ascending: false });
 
       if (data) {
         setSubmissions(data);
