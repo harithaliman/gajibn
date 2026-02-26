@@ -59,31 +59,154 @@ const GOV_VS_PRIVATE = {
 };
 
 // Source: MPEC Salary Guideline 2023 Edition - 22 Job Families, 100 Positions
+// Each level array: { title, salary } representing the full career ladder
 const MPEC_GUIDELINES = [
   // === GENERAL SECTOR ===
-  { family: "Information Technology", positions: ["IT Clerk", "IT Technician", "IT Executive", "IT System Manager"], entry: 492, mid: 1085, senior: 2170, sector: "General" },
-  { family: "Finance & Accounting", positions: ["Accounting Trainee", "Accounts Executive", "Accountant", "Finance Manager"], entry: 492, mid: 1953, senior: 9765, sector: "General" },
-  { family: "Customer Care", positions: ["Telephone Operator", "CS Executive", "CS Manager", "Retention Manager"], entry: 492, mid: 1085, senior: 3255, sector: "General" },
-  { family: "Administration", positions: ["Office Assistant", "Admin Executive", "Executive Secretary", "Admin Manager"], entry: 492, mid: 1085, senior: 2712, sector: "General" },
-  { family: "Culinary", positions: ["Kitchen Assistant", "Commis Chef", "Sous Chef", "Chef De Cuisine"], entry: 521, mid: 1085, senior: 3038, sector: "General" },
-  { family: "Retail", positions: ["Shelf Filler", "Cashier/Sales Asst", "Assistant Manager", "Shop Manager"], entry: 500, mid: 751, senior: 1628, sector: "General" },
-  { family: "Hospitality (Restaurant)", positions: ["Waiter/Waitress", "Headwaiter", "Asst Restaurant Mgr", "Restaurant Manager"], entry: 492, mid: 751, senior: 1628, sector: "General" },
-  { family: "Hospitality (Hotel)", positions: ["Bell Boy/Room Attendant", "Receptionist", "Duty Manager", "Front Office Manager"], entry: 492, mid: 751, senior: 1410, sector: "General" },
-  { family: "Logistics & Supply Chain", positions: ["Packer", "Warehouse Supervisor", "Logistics Executive", "Supply Chain Manager"], entry: 492, mid: 1085, senior: 3580, sector: "General" },
-  { family: "Tourism", positions: ["Junior Tour Guide", "Senior Tour Guide", "Travel Consultant", "Travel Agency Manager"], entry: 543, mid: 1085, senior: 3255, sector: "General" },
-  { family: "Teaching", positions: ["Teaching Aide", "Teacher", "Senior Teacher", "Principal"], entry: 492, mid: 1302, senior: 3146, sector: "General" },
-  { family: "Cleaning Services", positions: ["Cleaner", "Senior Cleaner", "Cleaning Supervisor", "Services Manager"], entry: 492, mid: 600, senior: 1410, sector: "General" },
+  { family: "Logistics", sector: "General", levels: [
+    { title: "Packer / Courier", salary: 492 },
+    { title: "Warehouse Assistant", salary: 977 },
+    { title: "Warehouse Supervisor", salary: 1736 },
+    { title: "Warehouse Manager", salary: 2170 },
+    { title: "Supply Chain Manager", salary: 3580 },
+  ]},
+  { family: "Customer Care", sector: "General", levels: [
+    { title: "Telephone Operator / Receptionist", salary: 492 },
+    { title: "Customer Care Trainee", salary: 868 },
+    { title: "Customer Care Executive", salary: 1085 },
+    { title: "Senior CC & Retention Executive", salary: 1627 },
+    { title: "CC & Retention Manager", salary: 3255 },
+  ]},
+  { family: "Administration", sector: "General", levels: [
+    { title: "Office Assistant / Receptionist", salary: 492 },
+    { title: "Clerk", salary: 868 },
+    { title: "Office Manager", salary: 1410 },
+    { title: "Executive Assistant", salary: 1736 },
+    { title: "Admin Manager", salary: 2712 },
+  ]},
+  { family: "Finance & Accounting", sector: "General", levels: [
+    { title: "Accounting Trainee", salary: 492 },
+    { title: "Accounting Clerk / Assistant", salary: 1085 },
+    { title: "Assistant Accountant", salary: 2170 },
+    { title: "Accountant", salary: 4340 },
+    { title: "Finance Manager", salary: 9765 },
+  ]},
+  { family: "Tourism", sector: "General", levels: [
+    { title: "Junior Tour Guide", salary: 543 },
+    { title: "Senior Tour Guide", salary: 868 },
+    { title: "Assistant Travel Consultant", salary: 1085 },
+    { title: "Travel Consultant", salary: 1736 },
+    { title: "Travel Agency Manager", salary: 3255 },
+  ]},
+  { family: "Cleaning Services", sector: "General", levels: [
+    { title: "Cleaner", salary: 492 },
+    { title: "Multi-Skilled Cleaner", salary: 543 },
+    { title: "Head Cleaner", salary: 673 },
+    { title: "Cleaning Supervisor", salary: 1085 },
+    { title: "Cleaning Services Manager", salary: 1410 },
+  ]},
+  { family: "Information Technology", sector: "General", levels: [
+    { title: "IT Clerk", salary: 492 },
+    { title: "IT Assistant", salary: 868 },
+    { title: "IT System Technician", salary: 977 },
+    { title: "IT System Executive", salary: 1628 },
+    { title: "IT System Manager", salary: 2170 },
+  ]},
+  { family: "Culinary", sector: "General", levels: [
+    { title: "Kitchen Assistant", salary: 521 },
+    { title: "Commis Chef", salary: 706 },
+    { title: "Chef De Partie", salary: 1085 },
+    { title: "Sous Chef", salary: 1628 },
+    { title: "Chef De Cuisine", salary: 3038 },
+  ]},
+  { family: "Retail", sector: "General", levels: [
+    { title: "Shelf Filler", salary: 500 },
+    { title: "Shop Assistant", salary: 543 },
+    { title: "Cashier", salary: 597 },
+    { title: "Shop Supervisor", salary: 868 },
+    { title: "Shop Manager", salary: 1628 },
+  ]},
+  { family: "Hospitality (Restaurant)", sector: "General", levels: [
+    { title: "Waiter / Waitress", salary: 492 },
+    { title: "Maître D' / Host", salary: 868 },
+    { title: "Asst Restaurant Manager", salary: 977 },
+    { title: "Restaurant Manager", salary: 1628 },
+  ]},
+  { family: "Teaching", sector: "General", levels: [
+    { title: "Teachers Aide", salary: 492 },
+    { title: "Teacher", salary: 868 },
+    { title: "Head of Teaching Dept", salary: 1844 },
+    { title: "Senior Teacher", salary: 2604 },
+    { title: "Principal", salary: 3146 },
+  ]},
+  { family: "Hospitality (Hotels)", sector: "General", levels: [
+    { title: "Bell Boy / Hotel Porter", salary: 492 },
+    { title: "Front Desk Clerk", salary: 543 },
+    { title: "Concierge", salary: 597 },
+    { title: "Front Office Manager", salary: 1410 },
+  ]},
   // === ENERGY SECTOR (OIL & GAS) ===
-  { family: "Welding", positions: ["Assistant 3G Welder", "6G Welder", "Welding Supervisor", "Welding Inspector"], entry: 700, mid: 1500, senior: 3500, sector: "Energy" },
-  { family: "Marker Fitter", positions: ["Assistant Fitter", "Fitter", "Senior Fitter", "Construction Supervisor"], entry: 700, mid: 1300, senior: 3500, sector: "Energy" },
-  { family: "Rigger", positions: ["Assistant Rigger", "Rigger", "Senior Rigger", "PIC/Supervisor"], entry: 700, mid: 1200, senior: 2500, sector: "Energy" },
-  { family: "Blaster Painter", positions: ["Assistant Blaster", "Blaster Painter", "Supervisor", "Inspector"], entry: 700, mid: 1200, senior: 3500, sector: "Energy" },
-  { family: "Scaffolding", positions: ["Assistant Scaffolder", "Scaffolder", "Scaffold Supervisor", "Scaffold Inspector"], entry: 700, mid: 1200, senior: 2500, sector: "Energy" },
-  { family: "Coating & Insulation", positions: ["Field Support", "Coating Applicator", "Supervisor", "Inspector"], entry: 700, mid: 1200, senior: 3000, sector: "Energy" },
-  { family: "Civil Works", positions: ["Field Support", "Civil Worker", "Senior Worker", "Inspector"], entry: 700, mid: 1000, senior: 1800, sector: "Energy" },
-  { family: "Industrial Cleaning", positions: ["Field Support", "Cleaner Operator", "Senior Operator", "Supervisor"], entry: 700, mid: 900, senior: 1300, sector: "Energy" },
-  { family: "Insulation", positions: ["Field Support", "Insulator", "Supervisor", "Inspector"], entry: 700, mid: 1200, senior: 3000, sector: "Energy" },
-  { family: "Fire Watch", positions: ["Field Support", "Firewatcher", "", ""], entry: 700, mid: 1000, senior: 1000, sector: "Energy" },
+  { family: "Welder", sector: "Energy", levels: [
+    { title: "L1 Welder Assistant (3G)", salary: 700 },
+    { title: "L2 Basic Welder (6GR)", salary: 1200 },
+    { title: "L3 Advanced CRA Welder", salary: 1800 },
+    { title: "L4 Asst Welding Supervisor", salary: 2500 },
+    { title: "L5 Welding Supervisor", salary: 3500 },
+  ]},
+  { family: "Marker Fitter", sector: "Energy", levels: [
+    { title: "L1 Marker Fitter Assistant", salary: 700 },
+    { title: "L2 Basic Marker Fitter", salary: 1000 },
+    { title: "L3 Advanced Marker Fitter", salary: 1500 },
+    { title: "L4 Asst Construction Supv", salary: 2000 },
+    { title: "L5 Construction Supervisor", salary: 3500 },
+  ]},
+  { family: "Rigger", sector: "Energy", levels: [
+    { title: "L1 Rigger Assistant", salary: 700 },
+    { title: "L2 Rigger", salary: 1000 },
+    { title: "L3 Rigger Leadman", salary: 1500 },
+    { title: "L4 Rigger Supv / PIC", salary: 2500 },
+  ]},
+  { family: "Blaster Painter", sector: "Energy", levels: [
+    { title: "L1 BP Assistant", salary: 700 },
+    { title: "L2 Basic Blaster Painter", salary: 1000 },
+    { title: "L3 BP Leadman", salary: 1500 },
+    { title: "L4 BP Supervisor", salary: 2500 },
+    { title: "L5 BP Inspector", salary: 3500 },
+  ]},
+  { family: "Scaffolder", sector: "Energy", levels: [
+    { title: "L1 Scaffolder Assistant", salary: 700 },
+    { title: "L2 Scaffolder Basic", salary: 1000 },
+    { title: "L3 Advanced Scaffolder", salary: 1500 },
+    { title: "L4 Scaffolder Inspector", salary: 2500 },
+  ]},
+  { family: "Fire Watcher", sector: "Energy", levels: [
+    { title: "L1 Fire Watcher Field Support", salary: 700 },
+    { title: "L2 Fire Watcher", salary: 1000 },
+  ]},
+  { family: "Coating", sector: "Energy", levels: [
+    { title: "L1 Coating Field Support", salary: 700 },
+    { title: "L2 Painter", salary: 1000 },
+    { title: "L3 Blaster Painter", salary: 1300 },
+    { title: "L4 Coating Supervisor", salary: 1800 },
+    { title: "L5 Coating Inspector", salary: 2300 },
+  ]},
+  { family: "Civil Works", sector: "Energy", levels: [
+    { title: "L1 Civil Field Support", salary: 700 },
+    { title: "L2 Civil Skill Worker", salary: 1000 },
+    { title: "L3 Civil Construction", salary: 1300 },
+    { title: "L4 Civil Construction Inspector", salary: 1800 },
+  ]},
+  { family: "Industrial Cleaner", sector: "Energy", levels: [
+    { title: "L1 IC Field Support", salary: 700 },
+    { title: "L2 Industrial Cleaner", salary: 1000 },
+    { title: "L3 IC Supervisor", salary: 1300 },
+  ]},
+  { family: "Insulator", sector: "Energy", levels: [
+    { title: "L1 Insulator Field Support", salary: 700 },
+    { title: "L2 Basic Insulator", salary: 1000 },
+    { title: "L3 Insulator / Fabricator", salary: 1300 },
+    { title: "L4 Insulator Supervisor", salary: 1800 },
+    { title: "L5 Insulation Inspector", salary: 3000 },
+  ]},
 ];
 
 // Source: DEPS Labour Force Survey 2024 Key Indicators
@@ -329,27 +452,60 @@ const ExplorePage = () => {
         <div>
           <p style={{ fontSize: 13, color: COLORS.textLight, marginBottom: 16 }}>The MPEC Salary Guideline (2023 Edition) recommends minimum salary scales for 22 job families and 100 positions in the private sector, developed from data on 114,000+ employees.</p>
           {["General", "Energy"].map(sector => (
-            <div key={sector} style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: sector === "Energy" ? COLORS.primaryDark : COLORS.accent1, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 12, paddingBottom: 8, borderBottom: `2px solid ${sector === "Energy" ? COLORS.primaryDark : COLORS.accent1}20` }}>
+            <div key={sector} style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: sector === "Energy" ? COLORS.primaryDark : COLORS.accent1, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16, paddingBottom: 8, borderBottom: `2px solid ${sector === "Energy" ? COLORS.primaryDark : COLORS.accent1}20` }}>
                 {sector === "Energy" ? "⛽ Energy Sector (Oil & Gas)" : "🏢 General Sector"}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
-            {MPEC_GUIDELINES.filter(f => f.sector === sector).map((fam, i) => (
-              <div key={i} style={{ background: COLORS.bgCard, borderRadius: 14, padding: 20, border: `1px solid ${COLORS.border}` }}>
-                <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 16, color: COLORS.text, marginBottom: 12 }}>{fam.family}</div>
-                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                  {[{ label: "Entry", val: fam.entry, color: COLORS.accent1 }, { label: "Mid", val: fam.mid, color: COLORS.primary }, { label: "Senior", val: fam.senior, color: COLORS.greenDark }].map(l => (
-                    <div key={l.label} style={{ flex: 1, textAlign: "center", padding: "8px 4px", borderRadius: 8, background: `${l.color}10` }}>
-                      <div style={{ fontSize: 10, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.8 }}>{l.label}</div>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: l.color }}>BND {l.val.toLocaleString()}</div>
-                    </div>
-                  ))}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {MPEC_GUIDELINES.filter(f => f.sector === sector).map((fam, i) => {
+              const maxSalary = Math.max(...fam.levels.map(l => l.salary));
+              const accentColor = sector === "Energy" ? COLORS.primaryDark : COLORS.accent1;
+              return (
+              <div key={i} style={{ background: COLORS.bgCard, borderRadius: 14, padding: "20px 24px", border: `1px solid ${COLORS.border}` }}>
+                <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 16 }}>{fam.family}</div>
+                {/* Career Ladder */}
+                <div style={{ display: "flex", alignItems: "flex-end", gap: 0, overflowX: "auto", paddingBottom: 4 }}>
+                  {fam.levels.map((level, j) => {
+                    const heightPercent = 30 + (level.salary / maxSalary) * 70;
+                    const isLast = j === fam.levels.length - 1;
+                    return (
+                      <div key={j} style={{ display: "flex", alignItems: "flex-end", flex: "1 1 0", minWidth: 100 }}>
+                        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          {/* Title */}
+                          <div style={{ fontSize: 11, color: COLORS.text, fontWeight: 500, textAlign: "center", marginBottom: 6, lineHeight: 1.3, minHeight: 28, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 4px" }}>
+                            {level.title}
+                          </div>
+                          {/* Step bar */}
+                          <div style={{
+                            width: "100%", height: `${heightPercent}px`, background: `linear-gradient(180deg, ${accentColor}18, ${accentColor}08)`,
+                            borderTop: `3px solid ${accentColor}`, borderRadius: "6px 6px 0 0",
+                            display: "flex", alignItems: "center", justifyContent: "center", position: "relative",
+                          }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: accentColor }}>
+                              {isLast ? ">" : ""} BND {level.salary.toLocaleString()}
+                            </div>
+                          </div>
+                          {/* Arrow connector */}
+                          {j < fam.levels.length - 1 && (
+                            <div style={{ position: "absolute", right: -8, top: "50%", fontSize: 14, color: COLORS.textMuted, zIndex: 1 }}>→</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div style={{ fontSize: 11, color: COLORS.textMuted }}>
-                  Roles: {fam.positions.filter(p => p).join(" → ")}
+                {/* Salary range summary */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
+                  <div style={{ fontSize: 11, color: COLORS.textMuted }}>{fam.levels.length} career levels</div>
+                  <div style={{ fontSize: 12, color: COLORS.textLight }}>
+                    <span style={{ fontWeight: 600, color: accentColor }}>BND {fam.levels[0].salary.toLocaleString()}</span>
+                    <span style={{ margin: "0 6px" }}>→</span>
+                    <span style={{ fontWeight: 600, color: COLORS.greenDark }}>BND {fam.levels[fam.levels.length - 1].salary.toLocaleString()}{fam.levels[fam.levels.length - 1] === fam.levels.at(-1) && fam.levels.at(-1).salary >= 1400 ? "+" : ""}</span>
+                  </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
               </div>
             </div>
           ))}
@@ -465,9 +621,17 @@ const ComparePage = () => {
             </div>
             {result.mpec && (
               <div style={{ marginTop: 20, padding: 16, background: `${COLORS.primary}08`, borderRadius: 10, border: `1px dashed ${COLORS.primary}40` }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: COLORS.primary, marginBottom: 4 }}>📋 MPEC Guideline for {result.mpec.family}</div>
-                <div style={{ fontSize: 13, color: COLORS.textLight }}>
-                  Entry: BND {result.mpec.entry} | Mid: BND {result.mpec.mid} | Senior: BND {result.mpec.senior}
+                <div style={{ fontSize: 12, fontWeight: 600, color: COLORS.primary, marginBottom: 8 }}>📋 MPEC Guideline for {result.mpec.family}</div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {result.mpec.levels.map((level, li) => (
+                    <div key={li} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div style={{ fontSize: 12, color: COLORS.textLight, padding: "3px 8px", background: result.userSalary >= level.salary ? `${COLORS.green}15` : "#f5f0eb", borderRadius: 6, border: result.userSalary >= level.salary ? `1px solid ${COLORS.green}40` : "1px solid transparent" }}>
+                        <span style={{ fontWeight: 600 }}>BND {level.salary.toLocaleString()}</span>
+                        <span style={{ fontSize: 10, color: COLORS.textMuted, marginLeft: 4 }}>{level.title}</span>
+                      </div>
+                      {li < result.mpec.levels.length - 1 && <span style={{ color: COLORS.textMuted, fontSize: 11 }}>→</span>}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
