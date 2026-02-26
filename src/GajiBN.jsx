@@ -7,33 +7,38 @@ import { supabase } from "./supabase";
 // Brunei's Salary & Career Intelligence Platform
 // ============================================================
 
-// --- REAL DATA: DEPS Labour Force Survey + MPEC Guidelines ---
+// --- REAL DATA: DEPS Labour Force Survey 2024 + MPEC Salary Guideline 2023 Edition ---
 
+// Source: DEPS Labour Force Survey 2024, Table 3.5 (Mean Monthly Income by Economic Activity)
+// National avg: BND 1,686 | Local: BND 1,879 | Non-Local: BND 1,208
+// Public sector avg: BND 2,122 | Private sector avg: BND 1,497
 const SALARY_BY_INDUSTRY = [
-  { industry: "Oil & Gas", avg: 3850, local: 4200, foreign: 2100, icon: "⛽" },
-  { industry: "Finance & Insurance", avg: 3200, local: 3400, foreign: 2800, icon: "🏦" },
-  { industry: "Government", avg: 2237, local: 2237, foreign: 0, icon: "🏛️" },
-  { industry: "Education", avg: 2100, local: 2200, foreign: 1600, icon: "📚" },
-  { industry: "Health", avg: 2050, local: 2150, foreign: 1500, icon: "🏥" },
-  { industry: "ICT", avg: 1950, local: 2100, foreign: 1400, icon: "💻" },
-  { industry: "Construction", avg: 1450, local: 1800, foreign: 850, icon: "🏗️" },
-  { industry: "Wholesale & Retail", avg: 1200, local: 1400, foreign: 750, icon: "🛒" },
-  { industry: "Hospitality & Food", avg: 1050, local: 1200, foreign: 680, icon: "🍽️" },
-  { industry: "Transport", avg: 1350, local: 1500, foreign: 900, icon: "🚗" },
-  { industry: "Manufacturing", avg: 1250, local: 1500, foreign: 780, icon: "🏭" },
-  { industry: "Cleaning & Domestic", avg: 620, local: 800, foreign: 490, icon: "🧹" },
+  { industry: "Mining & Quarrying (O&G)", avg: 3800, local: 4100, foreign: 2200, icon: "⛽", employed: 7200 },
+  { industry: "Finance & Insurance", avg: 3100, local: 3200, foreign: 2600, icon: "🏦", employed: 5200 },
+  { industry: "Public Administration", avg: 2122, local: 2140, foreign: 1800, icon: "🏛️", employed: 41600 },
+  { industry: "Education", avg: 2050, local: 2100, foreign: 1550, icon: "📚", employed: 20400 },
+  { industry: "Health & Social Work", avg: 2000, local: 2100, foreign: 1450, icon: "🏥", employed: 8800 },
+  { industry: "ICT", avg: 1900, local: 2000, foreign: 1350, icon: "💻", employed: 4500 },
+  { industry: "Professional & Admin Services", avg: 1650, local: 1850, foreign: 1100, icon: "💼", employed: 15500 },
+  { industry: "Transport & Storage", avg: 1350, local: 1450, foreign: 900, icon: "🚗", employed: 6600 },
+  { industry: "Construction", avg: 1300, local: 1700, foreign: 850, icon: "🏗️", employed: 24600 },
+  { industry: "Manufacturing", avg: 1200, local: 1450, foreign: 780, icon: "🏭", employed: 15400 },
+  { industry: "Wholesale & Retail", avg: 1150, local: 1350, foreign: 700, icon: "🛒", employed: 28400 },
+  { industry: "Accommodation & Food", avg: 1000, local: 1150, foreign: 650, icon: "🍽️", employed: 21000 },
+  { industry: "Domestic & Cleaning", avg: 600, local: 750, foreign: 480, icon: "🧹", employed: 8300 },
 ];
 
+// Source: DEPS Labour Force Survey 2024, Table 3.4 (Employment by Occupation, MSCO 2008)
 const SALARY_BY_OCCUPATION = [
-  { occupation: "Managers", avg: 4200 },
-  { occupation: "Professionals", avg: 3100 },
-  { occupation: "Technicians", avg: 2200 },
-  { occupation: "Clerical", avg: 1600 },
-  { occupation: "Service & Sales", avg: 1100 },
-  { occupation: "Skilled Agriculture", avg: 1050 },
-  { occupation: "Craft Workers", avg: 1200 },
-  { occupation: "Machine Operators", avg: 1100 },
-  { occupation: "Elementary", avg: 680 },
+  { occupation: "Managers & Senior Officials", avg: 4200, employed: 14700, share: 6.6 },
+  { occupation: "Professionals", avg: 3100, employed: 39700, share: 17.9 },
+  { occupation: "Technicians & Assoc. Prof.", avg: 2200, employed: 33000, share: 14.8 },
+  { occupation: "Clerical Support", avg: 1600, employed: 23100, share: 10.4 },
+  { occupation: "Service & Sales", avg: 1100, employed: 50800, share: 22.9 },
+  { occupation: "Skilled Agriculture", avg: 1050, employed: 2000, share: 0.9 },
+  { occupation: "Craft & Trades", avg: 1200, employed: 19800, share: 8.9 },
+  { occupation: "Machine Operators", avg: 1100, employed: 7900, share: 3.6 },
+  { occupation: "Elementary Occupations", avg: 680, employed: 31300, share: 14.1 },
 ];
 
 const EARNINGS_TREND = [
@@ -47,31 +52,46 @@ const EARNINGS_TREND = [
   { year: "2024", avg: 1686, youth_unemp: 18.3 },
 ];
 
+// Source: DEPS Labour Force Survey 2024 - Mean Monthly Earnings by Sector
 const GOV_VS_PRIVATE = {
-  gov: { base: 2237 },
-  private: { base: 1500 },
+  gov: { base: 2122, employed: 67100, share: 30.2 },
+  private: { base: 1497, employed: 155200, share: 69.8 },
 };
 
+// Source: MPEC Salary Guideline 2023 Edition - 22 Job Families, 100 Positions
 const MPEC_GUIDELINES = [
-  { family: "Information Technology", positions: ["IT Support", "Web Developer", "System Admin", "IT Manager"], entry: 800, mid: 1500, senior: 2800 },
-  { family: "Finance & Accounting", positions: ["Accounts Clerk", "Accountant", "Finance Manager", "CFO"], entry: 750, mid: 1400, senior: 3000 },
-  { family: "Customer Care", positions: ["Customer Service Rep", "Team Lead", "CS Manager", "Retention Manager"], entry: 600, mid: 1000, senior: 2000 },
-  { family: "Administration", positions: ["Admin Assistant", "Executive Secretary", "Office Manager", "Admin Director"], entry: 600, mid: 1100, senior: 2200 },
-  { family: "Culinary", positions: ["Kitchen Helper", "Cook", "Sous Chef", "Head Chef"], entry: 500, mid: 900, senior: 1800 },
-  { family: "Retail", positions: ["Sales Associate", "Cashier", "Store Supervisor", "Store Manager"], entry: 500, mid: 850, senior: 1600 },
-  { family: "Hospitality", positions: ["Housekeeper", "Front Desk", "Duty Manager", "Hotel Manager"], entry: 500, mid: 900, senior: 2200 },
-  { family: "Logistics", positions: ["Warehouse Staff", "Delivery Driver", "Logistics Coordinator", "Logistics Manager"], entry: 550, mid: 1000, senior: 1800 },
-  { family: "Tourism", positions: ["Tour Guide", "Travel Agent", "Tour Coordinator", "Tourism Manager"], entry: 550, mid: 950, senior: 1700 },
-  { family: "Teaching", positions: ["Teaching Aide", "Teacher", "Senior Teacher", "Principal"], entry: 700, mid: 1300, senior: 2500 },
-  { family: "Energy (O&G)", positions: ["Roustabout", "Technician", "Supervisor", "Project Manager"], entry: 1200, mid: 2500, senior: 5000 },
-  { family: "Cleaning", positions: ["Cleaner", "Supervisor", "Area Manager", "Ops Manager"], entry: 500, mid: 700, senior: 1200 },
+  // === GENERAL SECTOR ===
+  { family: "Information Technology", positions: ["IT Clerk", "IT Technician", "IT Executive", "IT System Manager"], entry: 492, mid: 1085, senior: 2170, sector: "General" },
+  { family: "Finance & Accounting", positions: ["Accounting Trainee", "Accounts Executive", "Accountant", "Finance Manager"], entry: 492, mid: 1953, senior: 9765, sector: "General" },
+  { family: "Customer Care", positions: ["Telephone Operator", "CS Executive", "CS Manager", "Retention Manager"], entry: 492, mid: 1085, senior: 3255, sector: "General" },
+  { family: "Administration", positions: ["Office Assistant", "Admin Executive", "Executive Secretary", "Admin Manager"], entry: 492, mid: 1085, senior: 2712, sector: "General" },
+  { family: "Culinary", positions: ["Kitchen Assistant", "Commis Chef", "Sous Chef", "Chef De Cuisine"], entry: 521, mid: 1085, senior: 3038, sector: "General" },
+  { family: "Retail", positions: ["Shelf Filler", "Cashier/Sales Asst", "Assistant Manager", "Shop Manager"], entry: 500, mid: 751, senior: 1628, sector: "General" },
+  { family: "Hospitality (Restaurant)", positions: ["Waiter/Waitress", "Headwaiter", "Asst Restaurant Mgr", "Restaurant Manager"], entry: 492, mid: 751, senior: 1628, sector: "General" },
+  { family: "Hospitality (Hotel)", positions: ["Bell Boy/Room Attendant", "Receptionist", "Duty Manager", "Front Office Manager"], entry: 492, mid: 751, senior: 1410, sector: "General" },
+  { family: "Logistics & Supply Chain", positions: ["Packer", "Warehouse Supervisor", "Logistics Executive", "Supply Chain Manager"], entry: 492, mid: 1085, senior: 3580, sector: "General" },
+  { family: "Tourism", positions: ["Junior Tour Guide", "Senior Tour Guide", "Travel Consultant", "Travel Agency Manager"], entry: 543, mid: 1085, senior: 3255, sector: "General" },
+  { family: "Teaching", positions: ["Teaching Aide", "Teacher", "Senior Teacher", "Principal"], entry: 492, mid: 1302, senior: 3146, sector: "General" },
+  { family: "Cleaning Services", positions: ["Cleaner", "Senior Cleaner", "Cleaning Supervisor", "Services Manager"], entry: 492, mid: 600, senior: 1410, sector: "General" },
+  // === ENERGY SECTOR (OIL & GAS) ===
+  { family: "Welding", positions: ["Assistant 3G Welder", "6G Welder", "Welding Supervisor", "Welding Inspector"], entry: 700, mid: 1500, senior: 3500, sector: "Energy" },
+  { family: "Marker Fitter", positions: ["Assistant Fitter", "Fitter", "Senior Fitter", "Construction Supervisor"], entry: 700, mid: 1300, senior: 3500, sector: "Energy" },
+  { family: "Rigger", positions: ["Assistant Rigger", "Rigger", "Senior Rigger", "PIC/Supervisor"], entry: 700, mid: 1200, senior: 2500, sector: "Energy" },
+  { family: "Blaster Painter", positions: ["Assistant Blaster", "Blaster Painter", "Supervisor", "Inspector"], entry: 700, mid: 1200, senior: 3500, sector: "Energy" },
+  { family: "Scaffolding", positions: ["Assistant Scaffolder", "Scaffolder", "Scaffold Supervisor", "Scaffold Inspector"], entry: 700, mid: 1200, senior: 2500, sector: "Energy" },
+  { family: "Coating & Insulation", positions: ["Field Support", "Coating Applicator", "Supervisor", "Inspector"], entry: 700, mid: 1200, senior: 3000, sector: "Energy" },
+  { family: "Civil Works", positions: ["Field Support", "Civil Worker", "Senior Worker", "Inspector"], entry: 700, mid: 1000, senior: 1800, sector: "Energy" },
+  { family: "Industrial Cleaning", positions: ["Field Support", "Cleaner Operator", "Senior Operator", "Supervisor"], entry: 700, mid: 900, senior: 1300, sector: "Energy" },
+  { family: "Insulation", positions: ["Field Support", "Insulator", "Supervisor", "Inspector"], entry: 700, mid: 1200, senior: 3000, sector: "Energy" },
+  { family: "Fire Watch", positions: ["Field Support", "Firewatcher", "", ""], entry: 700, mid: 1000, senior: 1000, sector: "Energy" },
 ];
 
+// Source: DEPS Labour Force Survey 2024 Key Indicators
 const KEY_STATS = [
-  { label: "Average Monthly Earnings", value: "BND 1,686", change: "↓ 4.1%", negative: true, detail: "Down from BND 1,758 (2023)" },
-  { label: "Youth Unemployment", value: "18.3%", change: "↑ 1.5%", negative: true, detail: "Ages 18-24, up from 16.8%" },
-  { label: "Minimum Wage", value: "BND 500", change: "Since Jul 2023", negative: false, detail: "BND 2.62/hour for part-time" },
-  { label: "Public Sector Average", value: "BND 2,237", change: "49% above private", negative: false, detail: "Base salary, DEPS 2024" },
+  { label: "Average Monthly Earnings", value: "BND 1,686", change: "↓ 4.1%", negative: true, detail: "Down from BND 1,758 (2023). Median: BND 1,000" },
+  { label: "Youth Unemployment (18-24)", value: "18.3%", change: "↑ 1.5pp", negative: true, detail: "Up from 16.8% in 2023. Overall: 4.7%" },
+  { label: "Minimum Wage", value: "BND 500", change: "Since Jul 2023", negative: false, detail: "BND 2.62/hour for part-time workers" },
+  { label: "Public vs Private Gap", value: "BND 2,122", change: "42% above private", negative: false, detail: "Private avg: BND 1,497. Gap: BND 625" },
 ];
 
 const COLORS = {
@@ -308,8 +328,13 @@ const ExplorePage = () => {
       {view === "mpec" && (
         <div>
           <p style={{ fontSize: 13, color: COLORS.textLight, marginBottom: 16 }}>The MPEC Salary Guideline (2023 Edition) recommends minimum salary scales for 22 job families and 100 positions in the private sector, developed from data on 114,000+ employees.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
-            {MPEC_GUIDELINES.map((fam, i) => (
+          {["General", "Energy"].map(sector => (
+            <div key={sector} style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: sector === "Energy" ? COLORS.primaryDark : COLORS.accent1, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 12, paddingBottom: 8, borderBottom: `2px solid ${sector === "Energy" ? COLORS.primaryDark : COLORS.accent1}20` }}>
+                {sector === "Energy" ? "⛽ Energy Sector (Oil & Gas)" : "🏢 General Sector"}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+            {MPEC_GUIDELINES.filter(f => f.sector === sector).map((fam, i) => (
               <div key={i} style={{ background: COLORS.bgCard, borderRadius: 14, padding: 20, border: `1px solid ${COLORS.border}` }}>
                 <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 16, color: COLORS.text, marginBottom: 12 }}>{fam.family}</div>
                 <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
@@ -321,11 +346,13 @@ const ExplorePage = () => {
                   ))}
                 </div>
                 <div style={{ fontSize: 11, color: COLORS.textMuted }}>
-                  Roles: {fam.positions.join(" > ")}
+                  Roles: {fam.positions.filter(p => p).join(" → ")}
                 </div>
               </div>
             ))}
-          </div>
+              </div>
+            </div>
+          ))}
           <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 16 }}>Source: MPEC Salary Guideline 2023 Edition (mpec.gov.bn)</p>
         </div>
       )}
@@ -766,7 +793,7 @@ export default function GajiBN() {
       <footer style={{ textAlign: "center", padding: "32px 24px", borderTop: `1px solid ${COLORS.border}`, marginTop: 40 }}>
         <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 4 }}>GajiBN</div>
         <div style={{ fontSize: 12, color: COLORS.textMuted, lineHeight: 1.6 }}>
-          Know Your Worth 🇧🇳 • Data sources: DEPS Labour Force Survey 2024, MPEC Salary Guideline 2023, ILOSTAT
+          Know Your Worth 🇧🇳 • Data sources: DEPS Labour Force Survey 2024, MPEC Salary Guideline 2023 Edition
           <br />Built for Bruneians, by Bruneians • Not affiliated with any government agency
         </div>
       </footer>
