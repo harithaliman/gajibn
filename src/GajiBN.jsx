@@ -351,7 +351,7 @@ const HomePage = ({ setActive }) => (
               <Line yAxisId="right" type="monotone" dataKey="youth_unemp" stroke={COLORS.accent1} strokeWidth={2} strokeDasharray="6 3" dot={{ r: 4, fill: COLORS.accent1 }} name="Youth Unemployment (%)" />
             </LineChart>
           </ResponsiveContainer>
-          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 8 }}>Source: DEPS Labour Force Survey 2017-2024</p>
+          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 8 }}>Source: <a href="https://deps.mofe.gov.bn/labour-force/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>DEPS Labour Force Survey 2017-2024</a></p>
         </div>
 
         <div style={{ flex: "1 1 320px", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -389,7 +389,7 @@ const ExplorePage = () => {
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
       <h2 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 28, color: COLORS.text, marginBottom: 4 }}>Explore Brunei Salaries</h2>
-      <p style={{ color: COLORS.textLight, marginBottom: 24, fontSize: 15 }}>Based on official DEPS Labour Force Survey 2024 and MPEC Salary Guidelines 2023</p>
+      <p style={{ color: COLORS.textLight, marginBottom: 24, fontSize: 15 }}>Based on official <a href="https://deps.mofe.gov.bn/labour-force/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent1, textDecoration: "underline" }}>DEPS Labour Force Survey 2024</a> and <a href="https://www.mpec.gov.bn/Pages/SalaryGuideline.aspx" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.accent1, textDecoration: "underline" }}>MPEC Salary Guidelines 2023</a></p>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
         {[{ id: "industry", label: "By Industry" }, { id: "occupation", label: "By Occupation" }, { id: "mpec", label: "MPEC Guidelines" }].map(v => (
@@ -429,7 +429,7 @@ const ExplorePage = () => {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 12 }}>Source: DEPS Labour Force Survey 2024. Figures are average monthly earnings in BND.</p>
+          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 12 }}>Source: <a href="https://deps.mofe.gov.bn/labour-force/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>DEPS Labour Force Survey 2024</a>. Figures are average monthly earnings in BND.</p>
         </div>
       )}
 
@@ -458,49 +458,57 @@ const ExplorePage = () => {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {MPEC_GUIDELINES.filter(f => f.sector === sector).map((fam, i) => {
-              const maxSalary = Math.max(...fam.levels.map(l => l.salary));
               const accentColor = sector === "Energy" ? COLORS.primaryDark : COLORS.accent1;
               return (
               <div key={i} style={{ background: COLORS.bgCard, borderRadius: 14, padding: "20px 24px", border: `1px solid ${COLORS.border}` }}>
-                <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 16 }}>{fam.family}</div>
-                {/* Career Ladder */}
-                <div style={{ display: "flex", alignItems: "flex-end", gap: 0, overflowX: "auto", paddingBottom: 4 }}>
+                <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 20 }}>{fam.family}</div>
+                {/* Arrow flow boxes */}
+                <div style={{ display: "flex", alignItems: "stretch", gap: 0, overflowX: "auto", paddingBottom: 8 }}>
                   {fam.levels.map((level, j) => {
-                    const heightPercent = 30 + (level.salary / maxSalary) * 70;
                     const isLast = j === fam.levels.length - 1;
+                    const isFirst = j === 0;
+                    const progress = fam.levels.length > 1 ? j / (fam.levels.length - 1) : 0;
+                    // Gradient from light blue to accent color
+                    const r = Math.round(91 + (accentColor === COLORS.primaryDark ? 106 : -2) * progress);
+                    const g = Math.round(141 + (accentColor === COLORS.primaryDark ? -35 : -52) * progress);
+                    const b = Math.round(184 + (accentColor === COLORS.primaryDark ? -147 : -4) * progress);
+                    const boxColor = `rgb(${r},${g},${b})`;
                     return (
-                      <div key={j} style={{ display: "flex", alignItems: "flex-end", flex: "1 1 0", minWidth: 100 }}>
-                        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                          {/* Title */}
-                          <div style={{ fontSize: 11, color: COLORS.text, fontWeight: 500, textAlign: "center", marginBottom: 6, lineHeight: 1.3, minHeight: 28, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 4px" }}>
+                      <div key={j} style={{ display: "flex", alignItems: "center", flex: "1 1 0", minWidth: 0 }}>
+                        {/* Box */}
+                        <div style={{
+                          flex: "1 1 0", minWidth: 90, padding: "14px 10px", textAlign: "center",
+                          background: boxColor, borderRadius: isFirst ? "10px 0 0 10px" : isLast ? "0 10px 10px 0" : 0,
+                          borderRight: isLast ? "none" : "2px solid rgba(255,255,255,0.4)",
+                          display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
+                        }}>
+                          <div style={{ fontSize: 11, color: "#fff", fontWeight: 500, lineHeight: 1.25, opacity: 0.92 }}>
                             {level.title}
                           </div>
-                          {/* Step bar */}
-                          <div style={{
-                            width: "100%", height: `${heightPercent}px`, background: `linear-gradient(180deg, ${accentColor}18, ${accentColor}08)`,
-                            borderTop: `3px solid ${accentColor}`, borderRadius: "6px 6px 0 0",
-                            display: "flex", alignItems: "center", justifyContent: "center", position: "relative",
-                          }}>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: accentColor }}>
-                              {isLast ? ">" : ""} BND {level.salary.toLocaleString()}
-                            </div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>
+                            {isLast && fam.levels.at(-1).salary >= 1400 ? "> " : ""}BND {level.salary.toLocaleString()}
                           </div>
-                          {/* Arrow connector */}
-                          {j < fam.levels.length - 1 && (
-                            <div style={{ position: "absolute", right: -8, top: "50%", fontSize: 14, color: COLORS.textMuted, zIndex: 1 }}>→</div>
-                          )}
                         </div>
+                        {/* Arrow */}
+                        {!isLast && (
+                          <div style={{
+                            width: 0, height: 0, flexShrink: 0,
+                            borderTop: "22px solid transparent", borderBottom: "22px solid transparent",
+                            borderLeft: `14px solid ${boxColor}`,
+                            marginRight: -14, zIndex: 1,
+                          }} />
+                        )}
                       </div>
                     );
                   })}
                 </div>
-                {/* Salary range summary */}
+                {/* Footer */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }}>
                   <div style={{ fontSize: 11, color: COLORS.textMuted }}>{fam.levels.length} career levels</div>
                   <div style={{ fontSize: 12, color: COLORS.textLight }}>
                     <span style={{ fontWeight: 600, color: accentColor }}>BND {fam.levels[0].salary.toLocaleString()}</span>
                     <span style={{ margin: "0 6px" }}>→</span>
-                    <span style={{ fontWeight: 600, color: COLORS.greenDark }}>BND {fam.levels[fam.levels.length - 1].salary.toLocaleString()}{fam.levels[fam.levels.length - 1] === fam.levels.at(-1) && fam.levels.at(-1).salary >= 1400 ? "+" : ""}</span>
+                    <span style={{ fontWeight: 600, color: COLORS.greenDark }}>BND {fam.levels.at(-1).salary.toLocaleString()}{fam.levels.at(-1).salary >= 1400 ? "+" : ""}</span>
                   </div>
                 </div>
               </div>
@@ -509,7 +517,7 @@ const ExplorePage = () => {
               </div>
             </div>
           ))}
-          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 16 }}>Source: MPEC Salary Guideline 2023 Edition (mpec.gov.bn)</p>
+          <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 16 }}>Source: <a href="https://www.mpec.gov.bn/Lists/EmployeePoliciesAndGuidelines/Attachments/8/Salary%20Guideline%20-%202023%20Edition.pdf" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>MPEC Salary Guideline 2023 Edition</a> (mpec.gov.bn)</p>
         </div>
       )}
     </div>
@@ -731,7 +739,7 @@ const GovPrivatePage = () => {
           Note: Salary figures are based on DEPS Labour Force Survey 2024 averages. Individual salaries vary by grade, ministry, company, and experience level. Non-salary benefits are described qualitatively as exact monetary values depend on individual circumstances.
         </p>
       </div>
-      <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 12 }}>Sources: DEPS Labour Force Survey 2024, TAP/SCP public contribution rates, publicly available information on government loan schemes.</p>
+      <p style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 12 }}>Sources: <a href="https://deps.mofe.gov.bn/labour-force/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>DEPS Labour Force Survey 2024</a>, TAP/SCP public contribution rates, publicly available information on government loan schemes.</p>
     </div>
   );
 };
@@ -957,7 +965,7 @@ export default function GajiBN() {
       <footer style={{ textAlign: "center", padding: "32px 24px", borderTop: `1px solid ${COLORS.border}`, marginTop: 40 }}>
         <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 18, color: COLORS.text, marginBottom: 4 }}>GajiBN</div>
         <div style={{ fontSize: 12, color: COLORS.textMuted, lineHeight: 1.6 }}>
-          Know Your Worth 🇧🇳 • Data sources: DEPS Labour Force Survey 2024, MPEC Salary Guideline 2023 Edition
+          Know Your Worth 🇧🇳 • Data sources: <a href="https://deps.mofe.gov.bn/labour-force/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>DEPS Labour Force Survey 2024</a>, <a href="https://www.mpec.gov.bn/Pages/SalaryGuideline.aspx" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.textMuted, textDecoration: "underline" }}>MPEC Salary Guideline 2023 Edition</a>
           <br />Built for Bruneians, by Bruneians • Not affiliated with any government agency
         </div>
       </footer>
